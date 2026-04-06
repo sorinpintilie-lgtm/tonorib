@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ocean: #0F3D56;
+    --teal: #117A8B;
+    --seafoam: #DFF4F2;
+    --ice: #F5FBFC;
+    --slate: #1F2A37;
+    --silver: #C9D6DF;
+    --coral: #FF7A59;
+    --fresh: #2E9E6F;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ice text-slate font-inter antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-manrope font-semibold text-slate;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-ocean text-white px-6 py-3 rounded-button font-medium transition-all duration-200 hover:bg-ocean-500 hover:shadow-card-hover active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply bg-teal text-white px-6 py-3 rounded-button font-medium transition-all duration-200 hover:bg-teal-500 hover:shadow-card-hover active:scale-[0.98];
+  }
+
+  .btn-outline {
+    @apply border-2 border-ocean text-ocean px-6 py-3 rounded-button font-medium transition-all duration-200 hover:bg-ocean hover:text-white active:scale-[0.98];
+  }
+
+  .btn-coral {
+    @apply bg-coral text-white px-6 py-3 rounded-button font-medium transition-all duration-200 hover:bg-coral-600 hover:shadow-card-hover active:scale-[0.98];
+  }
+
+  .card {
+    @apply bg-white rounded-card shadow-card transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply hover:shadow-card-hover hover:-translate-y-0.5;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-silver rounded-input bg-white text-slate placeholder:text-silver-400 focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent transition-all duration-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-fresh {
+    @apply bg-fresh-50 text-fresh border border-fresh-200;
+  }
+
+  .badge-verified {
+    @apply bg-teal-50 text-teal border border-teal-200;
+  }
+
+  .badge-stock {
+    @apply bg-[#E8EFF2] text-slate-700 border border-[#C9D6DF];
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-ocean to-teal bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-marine {
+    background: linear-gradient(135deg, #0F3D56 0%, #117A8B 50%, #0F3D56 100%);
+  }
+
+  .bg-pattern {
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(17, 122, 139, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(15, 61, 86, 0.1) 0%, transparent 50%);
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
