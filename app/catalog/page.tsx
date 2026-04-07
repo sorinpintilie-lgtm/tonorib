@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Search, Filter, X, ChevronDown, ChevronUp, SlidersHorizontal, Grid, List } from 'lucide-react';
@@ -16,7 +16,7 @@ const sortOptions = [
   { value: 'name', label: 'Name: A-Z' },
 ];
 
-export default function CatalogPage() {
+function CatalogContent() {
   const searchParams = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -473,5 +473,20 @@ export default function CatalogPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CatalogPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-ice flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-16 h-16 bg-ocean/20 rounded-full mb-4"></div>
+          <div className="h-4 w-32 bg-silver/30 rounded"></div>
+        </div>
+      </div>
+    }>
+      <CatalogContent />
+    </Suspense>
   );
 }
