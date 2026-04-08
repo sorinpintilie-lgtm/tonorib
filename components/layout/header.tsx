@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/auth';
 
 const navigation = [
   { name: 'Catalog', href: '/catalog' },
-  { name: 'Sellers', href: '/suppliers' },
+  { name: 'Sellers', href: '/seller' },
   { name: 'How it Works', href: '/how-it-works' },
 ];
 
