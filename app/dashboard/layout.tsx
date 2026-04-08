@@ -116,8 +116,8 @@ export default function DashboardLayout({
 
         {/* Main Content */}
         <main className={cn(
-          'flex-1 min-h-0 transition-all duration-300 bg-ice',
-          sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'
+          'flex-1 min-h-0 bg-ice',
+          sidebarCollapsed ? 'lg:pl-16' : 'lg:pl-64'
         )}>
           {children}
         </main>
