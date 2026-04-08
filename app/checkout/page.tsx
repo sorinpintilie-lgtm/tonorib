@@ -54,14 +54,14 @@ export default function CheckoutPage() {
         <div className="mb-8">
           <Link href="/cart" className="flex items-center gap-2 text-slate-500 hover:text-ocean mb-4">
             <ChevronLeft className="w-4 h-4" />
-            Nazaj v košarico
+            Back to cart
           </Link>
-          <h1 className="font-manrope font-bold text-2xl text-slate">Blagajna</h1>
+          <h1 className="font-manrope font-bold text-2xl text-slate">Checkout</h1>
         </div>
 
         {/* Progress Steps */}
         <div className="flex items-center justify-center mb-8">
-          {['Dostava', 'Pregled', 'Potrditev'].map((label, index) => (
+          {['Delivery', 'Review', 'Confirmation'].map((label, index) => (
             <div key={label} className="flex items-center">
               <div className={`flex items-center gap-2 ${step > index ? 'text-fresh' : step === index + 1 ? 'text-ocean' : 'text-slate-400'}`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -86,55 +86,55 @@ export default function CheckoutPage() {
               <div className="p-5 border-b border-silver/50">
                 <h2 className="font-manrope font-semibold text-lg text-slate flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-ocean" />
-                  Naslov dostave
+                  Delivery Address
                 </h2>
               </div>
               <div className="p-5 space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Input
-                    label="Ime"
+                    label="First name"
                     value={formData.firstName}
                     onChange={(e) => updateFormData('firstName', e.target.value)}
                   />
                   <Input
-                    label="Priimek"
+                    label="Last name"
                     value={formData.lastName}
                     onChange={(e) => updateFormData('lastName', e.target.value)}
                   />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Input
-                    label="E-pošta"
+                    label="Email"
                     type="email"
                     value={formData.email}
                     onChange={(e) => updateFormData('email', e.target.value)}
                   />
                   <Input
-                    label="Telefon"
+                    label="Phone"
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => updateFormData('phone', e.target.value)}
                   />
                 </div>
                 <Input
-                  label="Naslov"
+                  label="Address"
                   value={formData.address}
                   onChange={(e) => updateFormData('address', e.target.value)}
                 />
                 <div className="grid sm:grid-cols-2 gap-4">
                   <Input
-                    label="Kraj"
+                    label="City"
                     value={formData.city}
                     onChange={(e) => updateFormData('city', e.target.value)}
                   />
                   <Input
-                    label="Poštna številka"
+                    label="Postal code"
                     value={formData.postalCode}
                     onChange={(e) => updateFormData('postalCode', e.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate mb-2">Opomba (po želji)</label>
+                  <label className="block text-sm font-medium text-slate mb-2">Note (optional)</label>
                   <textarea
                     value={formData.note}
                     onChange={(e) => updateFormData('note', e.target.value)}
@@ -155,7 +155,7 @@ export default function CheckoutPage() {
                 <div className="p-5 border-b border-silver/50">
                   <h2 className="font-manrope font-semibold text-lg text-slate flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-ocean" />
-                    Naslov dostave
+                    Delivery address
                   </h2>
                 </div>
                 <div className="p-5">
@@ -171,7 +171,7 @@ export default function CheckoutPage() {
                 <div className="p-5 border-b border-silver/50">
                   <h2 className="font-manrope font-semibold text-lg text-slate flex items-center gap-2">
                     <ShoppingCart className="w-5 h-5 text-ocean" />
-                    Izdelki
+                    Products
                   </h2>
                 </div>
                 <div className="divide-y divide-silver/50">
@@ -192,7 +192,7 @@ export default function CheckoutPage() {
                 <div className="p-5 border-b border-silver/50">
                   <h2 className="font-manrope font-semibold text-lg text-slate flex items-center gap-2">
                     <CreditCard className="w-5 h-5 text-ocean" />
-                    Način plačila
+                    Payment Method
                   </h2>
                 </div>
                 <div className="p-5 space-y-3">
@@ -206,8 +206,8 @@ export default function CheckoutPage() {
                       className="w-4 h-4 text-ocean"
                     />
                     <div>
-                      <p className="font-medium text-slate">Plačilo po povzetju</p>
-                      <p className="text-sm text-slate-500"> Plačate ob prevzemu</p>
+                      <p className="font-medium text-slate">Cash on delivery</p>
+                      <p className="text-sm text-slate-500">Pay upon receipt</p>
                     </div>
                   </label>
                   <label className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer ${formData.paymentMethod === 'bank' ? 'border-ocean bg-ocean-50' : 'border-silver'}`}>
@@ -220,8 +220,8 @@ export default function CheckoutPage() {
                       className="w-4 h-4 text-ocean"
                     />
                     <div>
-                      <p className="font-medium text-slate">Bančno nakazilo</p>
-                      <p className="text-sm text-slate-500">Po oddaji naročila prejmate QR kodo</p>
+                      <p className="font-medium text-slate">Bank transfer</p>
+                      <p className="text-sm text-slate-500">You will receive a QR code after order submission</p>
                     </div>
                   </label>
                 </div>
@@ -235,18 +235,18 @@ export default function CheckoutPage() {
               <div className="w-16 h-16 rounded-full bg-fresh flex items-center justify-center mx-auto mb-6">
                 <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <h2 className="font-manrope font-bold text-2xl text-slate mb-2">Naročilo oddano!</h2>
-              <p className="text-slate-500 mb-6">Vaše naročilo je bilo uspešno oddano. Na vaš e-mail smo poslali potrditev.</p>
+              <h2 className="font-manrope font-bold text-2xl text-slate mb-2">Order placed!</h2>
+              <p className="text-slate-500 mb-6">Your order has been successfully placed. We have sent a confirmation to your email.</p>
               <div className="bg-seafoam rounded-lg p-4 max-w-sm mx-auto mb-6">
-                <p className="text-sm text-slate-500">Številka naročila</p>
+                <p className="text-sm text-slate-500">Order number</p>
                 <p className="font-manrope font-bold text-xl text-ocean">#RIB-2026-0042</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/account/orders">
-                  <Button variant="primary">Ogled naročila</Button>
+                  <Button variant="primary">View order</Button>
                 </Link>
                 <Link href="/catalog">
-                  <Button variant="outline">Nadaljuj z nakupovanjem</Button>
+                  <Button variant="outline">Continue shopping</Button>
                 </Link>
               </div>
             </div>
@@ -257,20 +257,20 @@ export default function CheckoutPage() {
             <div className="mt-6">
               <div className="card">
                 <div className="p-5 border-b border-silver/50">
-                  <h3 className="font-semibold text-slate">Povzetek</h3>
+                  <h3 className="font-semibold text-slate">Summary</h3>
                 </div>
                 <div className="p-5 space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Izdelki</span>
+                    <span className="text-slate-500">Products</span>
                     <span className="font-medium">€{subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Dostava</span>
+                    <span className="text-slate-500">Delivery</span>
                     <span className="font-medium">€{deliveryFee.toFixed(2)}</span>
                   </div>
                   <hr className="border-silver/50" />
                   <div className="flex justify-between">
-                    <span className="font-semibold">Skupaj</span>
+                    <span className="font-semibold">Total</span>
                     <span className="font-manrope font-bold text-xl">€{total.toFixed(2)}</span>
                   </div>
                 </div>
@@ -279,22 +279,22 @@ export default function CheckoutPage() {
                 <div className="p-4 bg-seafoam/50 border-t border-silver/50 space-y-2">
                   <div className="flex items-center gap-2 text-sm text-slate-600">
                     <Shield className="w-4 h-4 text-fresh" />
-                    Varne plačilo
+                    Secure payment
                   </div>
                   <div className="flex items-center gap-2 text-sm text-slate-600">
                     <Truck className="w-4 h-4 text-teal" />
-                    Dostava v 24-48 urah
+                    Delivery in 24-48 hours
                   </div>
                   <div className="flex items-center gap-2 text-sm text-slate-600">
                     <Clock className="w-4 h-4 text-ocean" />
-                    Svežina garantIRana
+                    Freshness guaranteed
                   </div>
                 </div>
 
                 {/* Submit Button */}
                 <div className="p-5 border-t border-silver/50">
                   <Button type="submit" variant="coral" size="lg" className="w-full">
-                    {step === 1 ? 'Naprej na pregled' : 'Potrdi naročilo'}
+                    {step === 1 ? 'Continue to review' : 'Confirm order'}
                   </Button>
                 </div>
               </div>

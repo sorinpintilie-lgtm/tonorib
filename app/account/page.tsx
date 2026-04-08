@@ -12,12 +12,12 @@ import { mockOrders, mockProducts, mockSellers } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 
 const accountNav = [
-  { name: 'Moj račun', href: '/account', icon: User },
-  { name: 'Moja naročila', href: '/account/orders', icon: ShoppingBag },
-  { name: 'Shranjeni izdelki', href: '/account/saved', icon: Heart },
-  { name: 'Naslovi dostave', href: '/account/addresses', icon: MapPin },
-  { name: 'Računi', href: '/account/invoices', icon: FileText },
-  { name: 'Nastavitve', href: '/account/settings', icon: Settings },
+  { name: 'My Account', href: '/account', icon: User },
+  { name: 'My Orders', href: '/account/orders', icon: ShoppingBag },
+  { name: 'Saved Products', href: '/account/saved', icon: Heart },
+  { name: 'Delivery Addresses', href: '/account/addresses', icon: MapPin },
+  { name: 'Invoices', href: '/account/invoices', icon: FileText },
+  { name: 'Settings', href: '/account/settings', icon: Settings },
 ];
 
 export default function AccountPage() {
@@ -29,8 +29,8 @@ export default function AccountPage() {
 
   // Mock addresses
   const addresses = [
-    { id: '1', name: 'Domači naslov', address: 'Trg mladih 5, 1000 Ljubljana', default: true },
-    { id: '2', name: 'Poslovni naslov', address: 'Dunajska cesta 15, 1000 Ljubljana', default: false },
+    { id: '1', name: 'Home address', address: 'Trg mladih 5, 1000 Ljubljana', default: true },
+    { id: '2', name: 'Business address', address: 'Dunajska cesta 15, 1000 Ljubljana', default: false },
   ];
 
   const getStatusBadge = (status: string) => {
@@ -43,12 +43,12 @@ export default function AccountPage() {
       cancelled: 'bg-coral-50 text-coral border border-coral-200',
     };
     const labels: Record<string, string> = {
-      pending: 'Čaka',
-      paid: 'Plačano',
-      processing: 'V obdelavi',
-      shipped: 'Poslano',
-      delivered: 'Dostavljeno',
-      cancelled: 'Preklicano',
+      pending: 'Pending',
+      paid: 'Paid',
+      processing: 'Processing',
+      shipped: 'Shipped',
+      delivered: 'Delivered',
+      cancelled: 'Cancelled',
     };
     return (
       <span className={`badge ${styles[status] || styles.pending}`}>
@@ -69,8 +69,8 @@ export default function AccountPage() {
                   <User className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate">Janez Novak</p>
-                  <p className="text-sm text-slate-500">janez@example.com</p>
+                  <p className="font-semibold text-slate">John Doe</p>
+                  <p className="text-sm text-slate-500">john@example.com</p>
                 </div>
               </div>
 
@@ -95,7 +95,7 @@ export default function AccountPage() {
                 })}
                 <button className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-seafoam transition-colors">
                   <LogOut className="w-5 h-5" />
-                  <span className="text-sm">Odjava</span>
+                  <span className="text-sm">Logout</span>
                 </button>
               </nav>
             </div>
@@ -106,10 +106,10 @@ export default function AccountPage() {
             {/* Welcome */}
             <div className="card p-6">
               <h1 className="font-manrope font-bold text-2xl text-slate mb-2">
-                Dobrodošli, Janez!
+                Welcome, John!
               </h1>
               <p className="text-slate-500">
-                Tukaj je pregled vašega računa in aktivnosti.
+                Here is an overview of your account and activity.
               </p>
             </div>
 
@@ -120,7 +120,7 @@ export default function AccountPage() {
                   <div className="w-10 h-10 rounded-full bg-seafoam flex items-center justify-center">
                     <ShoppingBag className="w-5 h-5 text-ocean" />
                   </div>
-                  <span className="text-slate-500 text-sm">Naročila</span>
+                  <span className="text-slate-500 text-sm">Orders</span>
                 </div>
                 <p className="font-manrope font-bold text-2xl text-slate">{orders.length}</p>
               </div>
@@ -129,7 +129,7 @@ export default function AccountPage() {
                   <div className="w-10 h-10 rounded-full bg-seafoam flex items-center justify-center">
                     <Heart className="w-5 h-5 text-ocean" />
                   </div>
-                  <span className="text-slate-500 text-sm">Shranjeno</span>
+                  <span className="text-slate-500 text-sm">Saved</span>
                 </div>
                 <p className="font-manrope font-bold text-2xl text-slate">{savedProducts.length}</p>
               </div>
@@ -138,7 +138,7 @@ export default function AccountPage() {
                   <div className="w-10 h-10 rounded-full bg-seafoam flex items-center justify-center">
                     <MapPin className="w-5 h-5 text-ocean" />
                   </div>
-                  <span className="text-slate-500 text-sm">Naslovi</span>
+                  <span className="text-slate-500 text-sm">Addresses</span>
                 </div>
                 <p className="font-manrope font-bold text-2xl text-slate">{addresses.length}</p>
               </div>
@@ -147,19 +147,19 @@ export default function AccountPage() {
             {/* Recent Orders */}
             <div className="card">
               <div className="flex items-center justify-between p-5 border-b border-silver/50">
-                <h2 className="font-manrope font-semibold text-lg text-slate">Zadnja naročila</h2>
+                <h2 className="font-manrope font-semibold text-lg text-slate">Recent Orders</h2>
                 <Link href="/account/orders" className="text-teal hover:text-teal-600 text-sm flex items-center gap-1">
-                  Prikaži vse <ChevronRight className="w-4 h-4" />
+                  View all <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-seafoam">
                     <tr>
-                      <th className="px-5 py-3 text-left text-xs font-semibold text-slate uppercase">Naročilo</th>
-                      <th className="px-5 py-3 text-left text-xs font-semibold text-slate uppercase">Datum</th>
+                      <th className="px-5 py-3 text-left text-xs font-semibold text-slate uppercase">Order</th>
+                      <th className="px-5 py-3 text-left text-xs font-semibold text-slate uppercase">Date</th>
                       <th className="px-5 py-3 text-left text-xs font-semibold text-slate uppercase">Status</th>
-                      <th className="px-5 py-3 text-left text-xs font-semibold text-slate uppercase">Znesek</th>
+                      <th className="px-5 py-3 text-left text-xs font-semibold text-slate uppercase">Amount</th>
                       <th className="px-5 py-3"></th>
                     </tr>
                   </thead>
@@ -168,13 +168,13 @@ export default function AccountPage() {
                       <tr key={order.id} className="hover:bg-seafoam/50">
                         <td className="px-5 py-4 font-medium text-slate">#{order.id.slice(-6)}</td>
                         <td className="px-5 py-4 text-sm text-slate-500">
-                          {new Date(order.createdAt).toLocaleDateString('sl-SI')}
+                          {new Date(order.createdAt).toLocaleDateString('en-US')}
                         </td>
                         <td className="px-5 py-4">{getStatusBadge(order.status)}</td>
                         <td className="px-5 py-4 font-semibold text-slate">€{order.total.toFixed(2)}</td>
                         <td className="px-5 py-4 text-right">
                           <Link href={`/account/orders/${order.id}`}>
-                            <button className="text-teal hover:text-teal-600 text-sm">Podrobnosti</button>
+                            <button className="text-teal hover:text-teal-600 text-sm">Details</button>
                           </Link>
                         </td>
                       </tr>
@@ -187,9 +187,9 @@ export default function AccountPage() {
             {/* Saved Products */}
             <div className="card">
               <div className="flex items-center justify-between p-5 border-b border-silver/50">
-                <h2 className="font-manrope font-semibold text-lg text-slate">Shranjeni izdelki</h2>
+                <h2 className="font-manrope font-semibold text-lg text-slate">Saved Products</h2>
                 <Link href="/account/saved" className="text-teal hover:text-teal-600 text-sm flex items-center gap-1">
-                  Prikaži vse <ChevronRight className="w-4 h-4" />
+                  View all <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
               <div className="p-5 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -212,9 +212,9 @@ export default function AccountPage() {
             {/* Addresses */}
             <div className="card">
               <div className="flex items-center justify-between p-5 border-b border-silver/50">
-                <h2 className="font-manrope font-semibold text-lg text-slate">Naslovi dostave</h2>
+                <h2 className="font-manrope font-semibold text-lg text-slate">Delivery Addresses</h2>
                 <button className="text-teal hover:text-teal-600 text-sm flex items-center gap-1">
-                  <Plus className="w-4 h-4" /> Dodaj
+                  <Plus className="w-4 h-4" /> Add
                 </button>
               </div>
               <div className="p-5 space-y-4">
@@ -224,7 +224,7 @@ export default function AccountPage() {
                       <div className="flex items-center gap-2 mb-1">
                         <p className="font-medium text-slate">{addr.name}</p>
                         {addr.default && (
-                          <span className="badge badge-verified text-xs">Privzeti</span>
+                          <span className="badge badge-verified text-xs">Default</span>
                         )}
                       </div>
                       <p className="text-slate-500 text-sm">{addr.address}</p>

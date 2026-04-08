@@ -22,9 +22,9 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
     return (
       <div className="min-h-screen bg-ice flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-slate mb-4">Prodajalec ne obstaja</h1>
+          <h1 className="text-2xl font-semibold text-slate mb-4">Seller not found</h1>
           <Link href="/catalog">
-            <Button>Nazaj na katalog</Button>
+            <Button>Back to catalog</Button>
           </Link>
         </div>
       </div>
@@ -37,9 +37,9 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
       <div className="bg-white border-b border-silver/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Link href="/" className="hover:text-ocean">Domov</Link>
+            <Link href="/" className="hover:text-ocean">Home</Link>
             <span>/</span>
-            <Link href="/suppliers" className="hover:text-ocean">Prodajalci</Link>
+            <Link href="/suppliers" className="hover:text-ocean">Sellers</Link>
             <span>/</span>
             <span className="text-slate">{seller.farmName}</span>
           </div>
@@ -64,7 +64,7 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
                 {seller.verified && (
                   <Badge variant="teal" className="bg-white/20 border-white text-white">
                     <CheckCircle className="w-3 h-3 mr-1" />
-                    Preverjeno
+                    Verified
                   </Badge>
                 )}
               </div>
@@ -79,7 +79,7 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Package className="w-4 h-4" />
-                  <span>{products.length} izdelkov</span>
+                  <span>{products.length} products</span>
                 </div>
               </div>
             </div>
@@ -88,11 +88,11 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
             <div className="flex flex-col sm:flex-row gap-3">
               <Button variant="outline" className="border-white text-white hover:bg-white hover:text-ocean">
                 <Mail className="w-4 h-4 mr-2" />
-                Kontaktiraj
+                Contact
               </Button>
               <Button variant="coral">
                 <Filter className="w-4 h-4 mr-2" />
-                Vsi izdelki
+                All products
               </Button>
             </div>
           </div>
@@ -113,7 +113,7 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
                     : 'text-slate-600 hover:bg-seafoam'
                 }`}
               >
-                Izdelki ({products.length})
+                Products ({products.length})
               </button>
               <button
                 onClick={() => setActiveTab('about')}
@@ -123,7 +123,7 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
                     : 'text-slate-600 hover:bg-seafoam'
                 }`}
               >
-                O nas
+                About
               </button>
               <button
                 onClick={() => setActiveTab('reviews')}
@@ -133,7 +133,7 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
                     : 'text-slate-600 hover:bg-seafoam'
                 }`}
               >
-                Mnenja
+                Reviews
               </button>
             </div>
 
@@ -149,7 +149,7 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
                 ) : (
                   <div className="card p-12 text-center">
                     <Fish className="w-12 h-12 text-silver mx-auto mb-4" />
-                    <p className="text-slate-500">Ta prodajalec nima objavljenih izdelkov.</p>
+                    <p className="text-slate-500">This seller has no published products.</p>
                   </div>
                 )}
               </>
@@ -158,23 +158,23 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
             {/* About Tab */}
             {activeTab === 'about' && (
               <div className="card p-6">
-                <h2 className="font-manrope font-semibold text-lg text-slate mb-4">O {seller.farmName}</h2>
+                <h2 className="font-manrope font-semibold text-lg text-slate mb-4">About {seller.farmName}</h2>
                 <p className="text-slate-700 leading-relaxed mb-6">{seller.description}</p>
                 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="p-4 bg-seafoam rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <MapPin className="w-5 h-5 text-ocean" />
-                      <span className="font-medium text-slate">Lokacija</span>
+                      <span className="font-medium text-slate">Location</span>
                     </div>
                     <p className="text-slate-600">{seller.location}</p>
                   </div>
                   <div className="p-4 bg-seafoam rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <Clock className="w-5 h-5 text-ocean" />
-                      <span className="font-medium text-slate">Član od</span>
+                      <span className="font-medium text-slate">Member since</span>
                     </div>
-                    <p className="text-slate-600">{new Date(seller.createdAt).toLocaleDateString('sl-SI', { year: 'numeric', month: 'long' })}</p>
+                    <p className="text-slate-600">{new Date(seller.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}</p>
                   </div>
                 </div>
               </div>
@@ -191,19 +191,14 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
                           <span className="text-white font-medium">J{review}</span>
                         </div>
                         <div>
-                          <p className="font-medium text-slate">Janez K.</p>
-                          <p className="text-sm text-slate-400">15. marca 2026</p>
+                          <p className="font-medium text-slate">John D.</p>
+                          <p className="text-sm text-slate-400">March 15, 2026</p>
                         </div>
-                      </div>
-                      <div className="flex gap-0.5">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star key={star} className="w-4 h-4 text-coral fill-coral" />
-                        ))}
                       </div>
                     </div>
                     <p className="text-slate-600">
-                      Odlična kakovost rib! Naročil sem postrv in bila je sveža in okusna. 
-                      Priporočam vsem, ki iščejo kakovostne lokalne ribe.
+                      Excellent quality fish! I ordered trout and it was fresh and tasty. 
+                      Highly recommend to anyone looking for quality local fish.
                     </p>
                   </div>
                 ))}
@@ -215,11 +210,11 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
           <aside className="space-y-6">
             {/* Contact Card */}
             <div className="card p-6">
-              <h3 className="font-semibold text-slate mb-4">Kontakt</h3>
+              <h3 className="font-semibold text-slate mb-4">Contact</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3 text-slate-600">
                   <Mail className="w-4 h-4 text-slate-400" />
-                  <span className="text-sm">info@{seller.farmName.toLowerCase().replace(/\s/g, '')}.si</span>
+                  <span className="text-sm">info@{seller.farmName.toLowerCase().replace(/\s/g, '')}.com</span>
                 </div>
                 <div className="flex items-center gap-3 text-slate-600">
                   <Phone className="w-4 h-4 text-slate-400" />
@@ -232,7 +227,7 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
             <div className="card p-6">
               <h3 className="font-semibold text-slate mb-4 flex items-center gap-2">
                 <Truck className="w-5 h-5 text-ocean" />
-                Regije dostave
+                Delivery regions
               </h3>
               <div className="flex flex-wrap gap-2">
                 {seller.deliveryRegions.map((region) => (
@@ -243,7 +238,7 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
 
             {/* Rating Summary */}
             <div className="card p-6">
-              <h3 className="font-semibold text-slate mb-4">Ocena</h3>
+              <h3 className="font-semibold text-slate mb-4">Rating</h3>
               <div className="flex items-center gap-3 mb-4">
                 <span className="font-manrope font-bold text-4xl text-slate">{seller.rating}</span>
                 <div>
@@ -252,7 +247,7 @@ export default function SupplierPage({ params }: { params: { id: string } }) {
                       <Star key={star} className="w-4 h-4 text-coral fill-coral" />
                     ))}
                   </div>
-                  <p className="text-sm text-slate-500">156 ocen</p>
+                  <p className="text-sm text-slate-500">156 reviews</p>
                 </div>
               </div>
               <div className="space-y-2">

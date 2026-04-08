@@ -57,10 +57,10 @@ export default function CartPage() {
       <div className="min-h-screen bg-ice flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           <ShoppingCart className="w-16 h-16 text-silver mx-auto mb-4" />
-          <h1 className="font-manrope font-bold text-2xl text-slate mb-2">Vaša košarica je prazna</h1>
-          <p className="text-slate-500 mb-6">Dodajte izdelke, da boste lahko nadaljevali z nakupom.</p>
+          <h1 className="font-manrope font-bold text-2xl text-slate mb-2">Your cart is empty</h1>
+          <p className="text-slate-500 mb-6">Add products to continue shopping.</p>
           <Link href="/catalog">
-            <Button variant="primary">Brskaj po katalogu</Button>
+            <Button variant="primary">Browse catalog</Button>
           </Link>
         </div>
       </div>
@@ -72,8 +72,8 @@ export default function CartPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="font-manrope font-bold text-2xl text-slate">Košarica</h1>
-          <p className="text-slate-500">{items.length} izdelkov v košarici</p>
+          <h1 className="font-manrope font-bold text-2xl text-slate">Cart</h1>
+          <p className="text-slate-500">{items.length} products in cart</p>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
@@ -84,7 +84,7 @@ export default function CartPage() {
                 {/* Seller Header */}
                 <div className="p-4 border-b border-silver/50 bg-seafoam/50">
                   <Link href={`/supplier/${sellerId}`} className="flex items-center gap-2">
-                    <span className="font-semibold text-slate hover:text-ocean">{seller?.farmName || 'Prodajalec'}</span>
+                    <span className="font-semibold text-slate hover:text-ocean">{seller?.farmName || 'Seller'}</span>
                   </Link>
                 </div>
 
@@ -142,7 +142,7 @@ export default function CartPage() {
                       <div className="text-right">
                         <p className="font-semibold text-slate">€{(product.pricePerKg * quantity).toFixed(2)}</p>
                         {quantity >= product.stockKg - 5 && product.stockKg < 50 && (
-                          <p className="text-xs text-coral mt-1">Opozorilo: majhna zaloga</p>
+                          <p className="text-xs text-coral mt-1">Warning: low stock</p>
                         )}
                       </div>
                     </div>
@@ -153,7 +153,7 @@ export default function CartPage() {
                 <div className="p-4 border-t border-silver/50 bg-seafoam/30">
                   <div className="flex items-center gap-2 text-sm text-slate-500">
                     <Truck className="w-4 h-4" />
-                    <span>Dostava: {seller?.deliveryRegions.slice(0, 2).join(', ')}</span>
+                    <span>Delivery: {seller?.deliveryRegions.slice(0, 2).join(', ')}</span>
                     <span className="text-slate-700 font-medium">+€12</span>
                   </div>
                 </div>
@@ -165,20 +165,20 @@ export default function CartPage() {
           <div className="lg:col-span-1">
             <div className="card sticky top-24">
               <div className="p-5 border-b border-silver/50">
-                <h2 className="font-manrope font-semibold text-lg text-slate">Povzetek naročila</h2>
+                <h2 className="font-manrope font-semibold text-lg text-slate">Order Summary</h2>
               </div>
               <div className="p-5 space-y-4">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500">Medvmesna vsota</span>
+                  <span className="text-slate-500">Subtotal</span>
                   <span className="text-slate font-medium">€{subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-500">Dostava ({Object.keys(groupedBySeller).length} prodajalcev)</span>
+                  <span className="text-slate-500">Delivery ({Object.keys(groupedBySeller).length} sellers)</span>
                   <span className="text-slate font-medium">€{deliveryFee.toFixed(2)}</span>
                 </div>
                 <hr className="border-silver/50" />
                 <div className="flex justify-between">
-                  <span className="font-semibold text-slate">Skupaj</span>
+                  <span className="font-semibold text-slate">Total</span>
                   <span className="font-manrope font-bold text-xl text-slate">€{total.toFixed(2)}</span>
                 </div>
 
@@ -186,20 +186,20 @@ export default function CartPage() {
                 <div className="flex items-start gap-2 p-3 bg-seafoam rounded-lg text-sm">
                   <MapPin className="w-4 h-4 text-teal flex-shrink-0 mt-0.5" />
                   <p className="text-slate-600">
-                    Dostava na naslov: <strong>Trg mladih 5, 1000 Ljubljana</strong>
+                    Delivery address: <strong>Trg mladih 5, 1000 Ljubljana</strong>
                   </p>
                 </div>
 
                 {/* CTA */}
                 <Link href="/checkout" className="block">
                   <Button variant="coral" size="lg" className="w-full flex items-center justify-center gap-2">
-                    Na blagajno
+                    Checkout
                     <ArrowRight className="w-4 h-4" />
                   </Button>
                 </Link>
 
                 <Link href="/catalog" className="block text-center">
-                  <Button variant="ghost" size="sm">Nadaljuj z nakupovanjem</Button>
+                  <Button variant="ghost" size="sm">Continue shopping</Button>
                 </Link>
               </div>
             </div>

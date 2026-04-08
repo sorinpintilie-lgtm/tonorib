@@ -119,9 +119,9 @@ function CatalogContent() {
       <div className="bg-white border-b border-silver/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Link href="/" className="hover:text-ocean">Domov</Link>
+            <Link href="/" className="hover:text-ocean">Home</Link>
             <span>/</span>
-            <span className="text-slate">Katalog</span>
+            <span className="text-slate">Catalog</span>
           </div>
         </div>
       </div>
@@ -132,13 +132,13 @@ function CatalogContent() {
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <div className="sticky top-24 card p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-manrope font-semibold text-lg text-slate">Filtriraj</h2>
+                <h2 className="font-manrope font-semibold text-lg text-slate">Filter</h2>
                 {activeFilterCount > 0 && (
                   <button
                     onClick={clearFilters}
                     className="text-sm text-teal hover:text-teal-600"
                   >
-                    Počisti vse
+                    Clear all
                   </button>
                 )}
               </div>
@@ -150,7 +150,7 @@ function CatalogContent() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-silver-400" />
                     <input
                       type="text"
-                      placeholder="Išči..."
+                      placeholder="Search..."
                       value={filters.search}
                       onChange={(e) => handleFilterChange('search', e.target.value)}
                       className="w-full pl-9 pr-3 py-2 bg-white border border-silver rounded-input text-sm focus:outline-none focus:ring-2 focus:ring-teal"
@@ -164,7 +164,7 @@ function CatalogContent() {
                     onClick={() => setExpandedFilters(prev => ({ ...prev, category: !prev.category }))}
                     className="flex items-center justify-between w-full text-left"
                   >
-                    <span className="font-medium text-slate"> Kategorija</span>
+                    <span className="font-medium text-slate"> Category</span>
                     {expandedFilters.category ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
                   {expandedFilters.category && (
@@ -186,7 +186,7 @@ function CatalogContent() {
                           onClick={() => handleFilterChange('category', '')}
                           className="text-xs text-teal hover:text-teal-600"
                         >
-                          Počisti
+                          Clear
                         </button>
                       )}
                     </div>
@@ -199,7 +199,7 @@ function CatalogContent() {
                     onClick={() => setExpandedFilters(prev => ({ ...prev, price: !prev.price }))}
                     className="flex items-center justify-between w-full text-left"
                   >
-                    <span className="font-medium text-slate">Cena €/kg</span>
+                    <span className="font-medium text-slate">Price €/kg</span>
                     {expandedFilters.price ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
                   {expandedFilters.price && (
@@ -228,7 +228,7 @@ function CatalogContent() {
                     onClick={() => setExpandedFilters(prev => ({ ...prev, seller: !prev.seller }))}
                     className="flex items-center justify-between w-full text-left"
                   >
-                    <span className="font-medium text-slate">Prodajalec</span>
+                    <span className="font-medium text-slate">Seller</span>
                     {expandedFilters.seller ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
                   {expandedFilters.seller && (
@@ -255,7 +255,7 @@ function CatalogContent() {
                     onClick={() => setExpandedFilters(prev => ({ ...prev, region: !prev.region }))}
                     className="flex items-center justify-between w-full text-left"
                   >
-                    <span className="font-medium text-slate">Regija dostave</span>
+                    <span className="font-medium text-slate">Delivery Region</span>
                     {expandedFilters.region ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
                   {expandedFilters.region && (
@@ -285,7 +285,7 @@ function CatalogContent() {
                       onChange={(e) => handleFilterChange('inStock', e.target.checked)}
                       className="w-5 h-5 text-teal focus:ring-teal rounded"
                     />
-                    <span className="font-medium text-slate">Samo na zalogi</span>
+                    <span className="font-medium text-slate">In Stock Only</span>
                   </label>
                 </div>
               </div>
@@ -302,7 +302,7 @@ function CatalogContent() {
                   className="lg:hidden flex items-center gap-2 px-4 py-2 bg-white border border-silver rounded-button text-slate"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
-                  Filtri
+                  Filters
                   {activeFilterCount > 0 && (
                     <span className="w-5 h-5 bg-coral text-white text-xs rounded-full flex items-center justify-center">
                       {activeFilterCount}
@@ -310,7 +310,7 @@ function CatalogContent() {
                   )}
                 </button>
                 <p className="text-slate-500">
-                  <span className="font-semibold text-slate">{products.length}</span> izdelkov
+                  <span className="font-semibold text-slate">{products.length}</span> products
                 </p>
               </div>
 
@@ -373,7 +373,7 @@ function CatalogContent() {
                 )}
                 {filters.inStock && (
                   <span className="inline-flex items-center gap-1 px-3 py-1 bg-white border border-silver rounded-full text-sm">
-                    Na zalogi
+                    In stock
                     <button onClick={() => handleFilterChange('inStock', false)} className="ml-1">
                       <X className="w-3 h-3" />
                     </button>
@@ -394,8 +394,8 @@ function CatalogContent() {
               </div>
             ) : (
               <div className="text-center py-16 bg-white rounded-card">
-                <p className="text-slate-500 mb-4">Noben izdelek ne ustreza vašim filtrom.</p>
-                <Button onClick={clearFilters}>Počisti filtre</Button>
+                <p className="text-slate-500 mb-4">No products match your filters.</p>
+                <Button onClick={clearFilters}>Clear filters</Button>
               </div>
             )}
           </div>
@@ -411,7 +411,7 @@ function CatalogContent() {
           />
           <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-white animate-slide-in-right overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-silver/50">
-              <h2 className="font-manrope font-semibold text-lg">Filtriraj</h2>
+              <h2 className="font-manrope font-semibold text-lg">Filters</h2>
               <button onClick={() => setShowMobileFilters(false)} className="p-2">
                 <X className="w-5 h-5" />
               </button>
@@ -423,7 +423,7 @@ function CatalogContent() {
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-silver-400" />
                   <input
                     type="text"
-                    placeholder="Išči..."
+                    placeholder="Search..."
                     value={filters.search}
                     onChange={(e) => handleFilterChange('search', e.target.value)}
                     className="w-full pl-9 pr-3 py-2 bg-white border border-silver rounded-input text-sm"
@@ -432,7 +432,7 @@ function CatalogContent() {
               </div>
 
               <div>
-                <h3 className="font-medium text-slate mb-3">Kategorija</h3>
+                <h3 className="font-medium text-slate mb-3">Category</h3>
                 <div className="space-y-2">
                   {categories.map((cat) => (
                     <label key={cat.id} className="flex items-center gap-2 cursor-pointer">
@@ -457,16 +457,16 @@ function CatalogContent() {
                     onChange={(e) => handleFilterChange('inStock', e.target.checked)}
                     className="w-5 h-5 text-teal rounded"
                   />
-                  <span className="font-medium">Samo na zalogi</span>
+                  <span className="font-medium">In stock only</span>
                 </label>
               </div>
             </div>
             <div className="p-4 border-t border-silver/50 flex gap-3">
               <Button variant="outline" onClick={clearFilters} className="flex-1">
-                Počisti
+                Clear
               </Button>
               <Button variant="primary" onClick={() => setShowMobileFilters(false)} className="flex-1">
-                Prikaži {products.length} izdelkov
+                Show {products.length} products
               </Button>
             </div>
           </div>

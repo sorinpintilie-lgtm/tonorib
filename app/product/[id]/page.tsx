@@ -26,8 +26,8 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
     return (
       <div className="min-h-screen bg-ice flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-slate mb-4">Izdelek ne obstaja</h1>
-          <Button onClick={() => router.push('/catalog')}>Nazaj na katalog</Button>
+          <h1 className="text-2xl font-semibold text-slate mb-4">Product not found</h1>
+          <Button onClick={() => router.push('/catalog')}>Back to catalog</Button>
         </div>
       </div>
     );
@@ -40,16 +40,16 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
   // Calculate freshness
   const getFreshnessInfo = () => {
-    if (!product.freshnessDate) return { label: 'Ni podatka', color: 'gray' };
+    if (!product.freshnessDate) return { label: 'No data', color: 'gray' };
     const freshness = new Date(product.freshnessDate);
     const today = new Date();
     const daysDiff = Math.floor((freshness.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
     
-    if (daysDiff < 0) return { label: 'Pretečen', color: 'red' };
-    if (daysDiff === 0) return { label: 'Danes svež', color: 'green' };
-    if (daysDiff <= 2) return { label: 'Zelo svež', color: 'green' };
-    if (daysDiff <= 5) return { label: 'Svež', color: 'green' };
-    return { label: ' свеž', color: 'yellow' };
+    if (daysDiff < 0) return { label: 'Expired', color: 'red' };
+    if (daysDiff === 0) return { label: 'Fresh today', color: 'green' };
+    if (daysDiff <= 2) return { label: 'Very fresh', color: 'green' };
+    if (daysDiff <= 5) return { label: 'Fresh', color: 'green' };
+    return { label: 'Fresh', color: 'yellow' };
   };
 
   const freshnessInfo = getFreshnessInfo();
@@ -61,18 +61,18 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
   // Format category label
   const categoryLabels: Record<string, string> = {
-    fresh: 'Sveže',
-    frozen: 'Zamrznjeno',
-    smoked: 'Dimljeno',
-    live: 'Živo',
-    fillet: 'File',
+    fresh: 'Fresh',
+    frozen: 'Frozen',
+    smoked: 'Smoked',
+    live: 'Live',
+    fillet: 'Fillet',
   };
 
   const tabs = [
-    { id: 'description', label: 'Opis' },
-    { id: 'farming', label: 'Gojenje' },
-    { id: 'delivery', label: 'Dostava' },
-    { id: 'reviews', label: 'Mnenja (12)' },
+    { id: 'description', label: 'Description' },
+    { id: 'farming', label: 'Farming' },
+    { id: 'delivery', label: 'Delivery' },
+    { id: 'reviews', label: 'Reviews (12)' },
   ];
 
   return (
@@ -81,9 +81,9 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
       <div className="bg-white border-b border-silver/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Link href="/" className="hover:text-ocean">Domov</Link>
+            <Link href="/" className="hover:text-ocean">Home</Link>
             <span>/</span>
-            <Link href="/catalog" className="hover:text-ocean">Katalog</Link>
+            <Link href="/catalog" className="hover:text-ocean">Catalog</Link>
             <span>/</span>
             <span className="text-slate">{product.name}</span>
           </div>
@@ -113,10 +113,10 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   </Badge>
                 )}
                 {!isInStock && (
-                  <Badge variant="stock">Ni na zalogi</Badge>
+                  <Badge variant="stock">Out of stock</Badge>
                 )}
                 {isInStock && isLowStock && (
-                  <Badge variant="coral">Zadnji kosi</Badge>
+                  <Badge variant="coral">Last pieces</Badge>
                 )}
               </div>
 
@@ -169,7 +169,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               <Badge variant="default">{categoryLabels[product.category]}</Badge>
               {product.category === 'fresh' && product.freshnessDate && (
                 <span className="text-sm text-slate-500">
-                  Pobran: {new Date(product.freshnessDate).toLocaleDateString('sl-SI')}
+                  Harvested: {new Date(product.freshnessDate).toLocaleDateString('en-US')}
                 </span>
               )}
             </div>
@@ -221,11 +221,11 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               <div className="flex items-center gap-4 mb-6 text-sm">
                 <span className={`flex items-center gap-1.5 ${isInStock ? 'text-fresh' : 'text-coral'}`}>
                   {isInStock ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                  {isInStock ? `Na zalogi: ${product.stockKg} kg` : 'Ni na zalogi'}
+                  {isInStock ? `In stock: ${product.stockKg} kg` : 'Out of stock'}
                 </span>
                 {product.minOrderKg > 1 && (
                   <span className="text-slate-500">
-                    Min. naročilo: {product.minOrderKg} kg
+                    Min. order: {product.minOrderKg} kg
                   </span>
                 )}
               </div>
@@ -233,7 +233,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
               {/* Quantity Selector */}
               {isInStock && (
                 <div className="flex items-center gap-4 mb-6">
-                  <span className="text-slate-700">Količina (kg):</span>
+                  <span className="text-slate-700">Quantity (kg):</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setQuantity(Math.max(product.minOrderKg, quantity - 1))}
@@ -256,7 +256,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
 
               {/* Estimated Total */}
               <div className="flex items-center justify-between py-4 border-t border-silver/50 mb-6">
-                <span className="text-slate-700">Skupaj:</span>
+                <span className="text-slate-700">Total:</span>
                 <span className="font-manrope font-bold text-xl text-slate">€{totalPrice.toFixed(2)}</span>
               </div>
 
@@ -269,7 +269,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                   className="flex-1 flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  Dodaj v košarico
+                  Add to cart
                 </Button>
                 <Button variant="outline" size="lg" className="flex items-center justify-center">
                   <Heart className="w-5 h-5" />
@@ -284,28 +284,28 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             <div className="bg-white rounded-card p-6">
               <h3 className="font-semibold text-slate mb-4 flex items-center gap-2">
                 <Truck className="w-5 h-5 text-ocean" />
-                Možnosti dostave
+                Delivery options
               </h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-slate-400" />
-                    <span>Osebni prevzem</span>
+                    <span>Pickup</span>
                   </div>
-                  <span className="text-slate-600">Brezplačno</span>
+                  <span className="text-slate-600">Free</span>
                 </div>
                 {product.deliveryRegions.slice(0, 3).map((region) => (
                   <div key={region} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
                       <Truck className="w-4 h-4 text-slate-400" />
-                      <span>Dostava: {region}</span>
+                      <span>Delivery: {region}</span>
                     </div>
                     <span className="text-slate-600">€12</span>
                   </div>
                 ))}
                 {product.deliveryRegions.length > 3 && (
                   <p className="text-sm text-slate-500">
-                    + {product.deliveryRegions.length - 3} drugih regij
+                    + {product.deliveryRegions.length - 3} more regions
                   </p>
                 )}
               </div>
@@ -339,22 +339,22 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             {activeTab === 'description' && (
               <div className="prose max-w-none">
                 <p className="text-slate-700 leading-relaxed">{product.description}</p>
-                <h4 className="font-semibold text-slate mt-6 mb-3">Podatki o izdelku</h4>
+                <h4 className="font-semibold text-slate mt-6 mb-3">Product Details</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-slate-500">Vrsta ribe:</span>
+                    <span className="text-slate-500">Fish species:</span>
                     <span className="ml-2 text-slate-700">{product.species}</span>
                   </div>
                   <div>
-                    <span className="text-slate-500">KategorUla:</span>
+                    <span className="text-slate-500">Category:</span>
                     <span className="ml-2 text-slate-700">{categoryLabels[product.category]}</span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Izvor:</span>
+                    <span className="text-slate-500">Origin:</span>
                     <span className="ml-2 text-slate-700">{product.origin}</span>
                   </div>
                   <div>
-                    <span className="text-slate-500">Enota:</span>
+                    <span className="text-slate-500">Unit:</span>
                     <span className="ml-2 text-slate-700">kg</span>
                   </div>
                 </div>
@@ -364,14 +364,14 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
             {activeTab === 'farming' && (
               <div className="space-y-4">
                 <p className="text-slate-700">
-                  Izdelek prihaja iz {seller?.farmName}, {seller?.location}. 
+                  Product from {seller?.farmName}, {seller?.location}. 
                   {seller?.description}
                 </p>
                 <div className="flex items-start gap-3 p-4 bg-seafoam rounded-lg">
                   <Shield className="w-5 h-5 text-teal flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-slate">Preverjena kakovost</h4>
-                    <p className="text-sm text-slate-600">Ta prodajalec ima certifikat za kakovost in redno preverjane izdelke.</p>
+                    <h4 className="font-semibold text-slate">Verified quality</h4>
+                    <p className="text-sm text-slate-600">This seller has quality certification and regularly verified products.</p>
                   </div>
                 </div>
               </div>
@@ -382,15 +382,15 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                 <div className="flex items-start gap-3 p-4 bg-seafoam rounded-lg">
                   <Package className="w-5 h-5 text-ocean flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-slate">Pakiranje</h4>
-                    <p className="text-sm text-slate-600">Izdelek je pakiran v hladilno embalažo z ledom za ohranjanje svežine.</p>
+                    <h4 className="font-semibold text-slate">Packaging</h4>
+                    <p className="text-sm text-slate-600">Product is packed in insulated packaging with ice to maintain freshness.</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 p-4 bg-seafoam rounded-lg">
                   <Truck className="w-5 h-5 text-ocean flex-shrink-0 mt-0.5" />
                   <div>
-                    <h4 className="font-semibold text-slate">Dostava</h4>
-                    <p className="text-sm text-slate-600">Dostava poteka v 24-48 urah. Izdelek je dostavljen v hladilni verigi.</p>
+                    <h4 className="font-semibold text-slate">Delivery</h4>
+                    <p className="text-sm text-slate-600">Delivery within 24-48 hours. Product delivered in cold chain.</p>
                   </div>
                 </div>
               </div>
@@ -404,10 +404,10 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
                       {[1, 2, 3, 4, 5].map((star) => (
                         <Star key={star} className="w-4 h-4 text-coral fill-coral" />
                       ))}
-                      <span className="text-sm text-slate-500">Janez K.</span>
+                      <span className="text-sm text-slate-500">John D.</span>
                     </div>
                     <p className="text-slate-700">
-                      Odlična kakovost rib, sveže in okusne. Priporočam!
+                      Excellent quality fish, fresh and tasty. Highly recommend!
                     </p>
                   </div>
                 ))}
@@ -420,7 +420,7 @@ export default function ProductDetailPage({ params }: { params: { id: string } }
         {relatedProducts.length > 0 && (
           <div>
             <h2 className="font-manrope font-semibold text-2xl text-slate mb-6">
-              Več izdelkov od {seller?.farmName}
+              More products from {seller?.farmName}
             </h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedProducts.map((p) => (
