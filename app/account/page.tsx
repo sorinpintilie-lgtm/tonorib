@@ -44,6 +44,8 @@ export default function AccountPage() {
 
   if (!user) return null;
   
+  const userDisplayName = user.fullName || user.email?.split('@')[0] || 'User';
+  
   // Mock saved products
   const savedProducts = mockProducts.slice(0, 4);
 
@@ -89,8 +91,8 @@ export default function AccountPage() {
                   <User className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate">John Doe</p>
-                  <p className="text-sm text-slate-500">john@example.com</p>
+                  <p className="font-semibold text-slate">{userDisplayName}</p>
+                  <p className="text-sm text-slate-500">{user.email}</p>
                 </div>
               </div>
 
@@ -126,7 +128,7 @@ export default function AccountPage() {
             {/* Welcome */}
             <div className="card p-6">
               <h1 className="font-manrope font-bold text-2xl text-slate mb-2">
-                Welcome, John!
+                Welcome, {userDisplayName}!
               </h1>
               <p className="text-slate-500">
                 Here is an overview of your account and activity.
