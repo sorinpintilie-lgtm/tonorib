@@ -104,7 +104,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content */}
-      <div className="p-6 lg:p-8">
+      <div className="py-6 pe-6 lg:py-8">
         {/* Stats Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat) => (
