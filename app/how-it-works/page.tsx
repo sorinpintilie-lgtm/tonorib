@@ -121,7 +121,7 @@ export default function HowItWorksPage() {
               ))}
             </div>
 
-            <div className="mt-12 card p-8 bg-gradient-ocean">
+            <div className="mt-12 card p-8 bg-ocean">
               <div className="grid lg:grid-cols-2 gap-8 items-center">
                 <div>
                   <h3 className="font-manrope font-bold text-xl text-white mb-3">
