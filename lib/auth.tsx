@@ -1,11 +1,16 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-
-const API_KEY = "AIzaSyAlTqERFPJ1ufPk7zVSpy6_FeVxX7dMao4";
-const PROJECT_ID = "tonorib-24994";
-const BASE_URL = `https://identitytoolkit.googleapis.com/v1`;
-const DB_URL = `https://firestore.googleapis.com/v1/projects/${PROJECT_ID}/databases/(default)/documents`;
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  updateProfile,
+  User as FirebaseUser
+} from 'firebase/auth';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from './firebase';
 
 interface UserData {
   uid: string;
@@ -13,7 +18,6 @@ interface UserData {
   fullName: string;
   role: 'buyer' | 'seller';
   phone?: string;
-  idToken?: string;
 }
 
 interface AuthContextType {
@@ -33,17 +37,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Check for existing session on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('tonorib_user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch {
-        localStorage.removeItem('tonorib_user');
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          const userData = userDoc.exists() ? userDoc.data() : null;
+          
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            fullName: userData?.fullName || '',
+            role: userData?.role || 'buyer',
+            phone: userData?.phone,
+          });
+        } catch (e) {
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            fullName: '',
+            role: 'buyer',
+          });
+        }
+      } else {
+        setUser(null);
       }
-    }
-    setLoading(false);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const clearError = () => setError(null);
@@ -52,41 +74,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      // Sign in with Firebase Auth REST API
-      const response = await fetch(`${BASE_URL}:signInWithPassword?key=${API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          password,
-          returnSecureToken: true,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(getAuthErrorMessage(data.error?.message || 'INVALID_CREDENTIAL'));
-      }
-
-      // Get user data from Firestore
-      const userData = await fetchUserData(data.localId);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+      const userData = userDoc.exists() ? userDoc.data() : null;
 
       const user: UserData = {
-        uid: data.localId,
-        email: data.email,
+        uid: result.user.uid,
+        email: result.user.email || '',
         fullName: userData?.fullName || '',
         role: userData?.role || 'buyer',
         phone: userData?.phone,
-        idToken: data.idToken,
       };
 
       setUser(user);
       localStorage.setItem('tonorib_user', JSON.stringify(user));
-      localStorage.setItem('tonorib_token', data.idToken);
-    } catch (err: any) {
-      setError(err.message || 'Login failed');
-      throw err;
+    } catch (e: any) {
+      const message = getAuthErrorMessage(e.code);
+      setError(message);
+      throw new Error(message);
     } finally {
       setLoading(false);
     }
@@ -102,59 +107,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
-      // Create user with Firebase Auth REST API
-      const response = await fetch(`${BASE_URL}:signUp?key=${API_KEY}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email,
-          password,
-          returnSecureToken: true,
-        }),
-      });
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      
+      await updateProfile(result.user, { displayName: fullName });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(getAuthErrorMessage(data.error?.message || 'EMAIL_EXISTS'));
-      }
-
-      // Store user data in Firestore
-      await setUserData(data.localId, {
-        uid: data.localId,
+      await setDoc(doc(db, 'users', result.user.uid), {
+        uid: result.user.uid,
         email,
         fullName,
         role,
         phone: extraData?.phone || '',
+        createdAt: serverTimestamp(),
       });
 
-      // Create seller profile if seller
       if (role === 'seller') {
-        await setSellerData(data.localId, {
-          ownerId: data.localId,
+        await setDoc(doc(db, 'sellers', result.user.uid), {
+          ownerId: result.user.uid,
           farmName: extraData?.farmName || '',
           description: '',
           location: extraData?.location || '',
           verified: false,
           rating: 0,
+          productsCount: 0,
+          createdAt: serverTimestamp(),
         });
       }
 
       const user: UserData = {
-        uid: data.localId,
+        uid: result.user.uid,
         email,
         fullName,
         role,
         phone: extraData?.phone,
-        idToken: data.idToken,
       };
 
       setUser(user);
       localStorage.setItem('tonorib_user', JSON.stringify(user));
-      localStorage.setItem('tonorib_token', data.idToken);
-    } catch (err: any) {
-      setError(err.message || 'Registration failed');
-      throw err;
+    } catch (e: any) {
+      const message = getAuthErrorMessage(e.code);
+      setError(message);
+      throw new Error(message);
     } finally {
       setLoading(false);
     }
@@ -163,11 +155,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     setLoading(true);
     try {
+      await signOut(auth);
       setUser(null);
       localStorage.removeItem('tonorib_user');
-      localStorage.removeItem('tonorib_token');
-    } catch (err: any) {
-      setError(getAuthErrorMessage('UNKNOWN'));
+    } catch (e: any) {
+      setError(getAuthErrorMessage(e.code));
     } finally {
       setLoading(false);
     }
@@ -188,76 +180,22 @@ export function useAuth() {
   return context;
 }
 
-// Firestore helper functions using REST API
-async function fetchUserData(uid: string): Promise<UserData | null> {
-  try {
-    const token = localStorage.getItem('tonorib_token');
-    const response = await fetch(`${DB_URL}/users/${uid}?key=${API_KEY}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (response.ok) {
-      const data = await response.json();
-      return data.fields ? {
-        uid: data.fields.uid?.stringValue || uid,
-        email: data.fields.email?.stringValue || '',
-        fullName: data.fields.fullName?.stringValue || '',
-        role: (data.fields.role?.stringValue as 'buyer' | 'seller') || 'buyer',
-        phone: data.fields.phone?.stringValue,
-      } : null;
-    }
-  } catch {
-    // Ignore errors
-  }
-  return null;
-}
-
-async function setUserData(uid: string, data: Record<string, any>) {
-  try {
-    const token = localStorage.getItem('tonorib_token');
-    await fetch(`${DB_URL}/users/${uid}?key=${API_KEY}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ fields: data }),
-    });
-  } catch {
-    // Ignore errors
-  }
-}
-
-async function setSellerData(uid: string, data: Record<string, any>) {
-  try {
-    const token = localStorage.getItem('tonorib_token');
-    await fetch(`${DB_URL}/sellers/${uid}?key=${API_KEY}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ fields: data }),
-    });
-  } catch {
-    // Ignore errors
-  }
-}
-
 function getAuthErrorMessage(code: string): string {
   switch (code) {
-    case 'EMAIL_EXISTS':
+    case 'auth/email-already-in-use':
       return 'This email is already registered.';
-    case 'INVALID_EMAIL':
+    case 'auth/invalid-email':
       return 'Invalid email address.';
-    case 'WEAK_PASSWORD':
+    case 'auth/weak-password':
       return 'Password is too weak (minimum 6 characters).';
-    case 'INVALID_PASSWORD':
+    case 'auth/wrong-password':
       return 'Incorrect password.';
-    case 'EMAIL_NOT_FOUND':
+    case 'auth/user-not-found':
       return 'No account found with this email.';
-    case 'INVALID_CREDENTIALS':
+    case 'auth/invalid-credential':
+    case 'auth/invalid-login-credentials':
       return 'Invalid email or password.';
-    case 'TOO_MANY_ATTEMPTS':
+    case 'auth/too-many-requests':
       return 'Too many attempts. Please try again later.';
     default:
       return 'An error occurred. Please try again.';
