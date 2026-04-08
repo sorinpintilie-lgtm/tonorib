@@ -128,19 +128,19 @@ export default function HowItWorksPage() {
                     Why Buy on TonoRib?
                   </h3>
                   <ul className="space-y-3">
-                    <li className="flex items-center gap-3 text-silver-100">
+                    <li className="flex items-center gap-3 text-white">
                       <CheckCircle className="w-5 h-5 text-fresh" />
                       <span>Fresh fish directly from farms</span>
                     </li>
-                    <li className="flex items-center gap-3 text-silver-100">
+                    <li className="flex items-center gap-3 text-white">
                       <CheckCircle className="w-5 h-5 text-fresh" />
                       <span>Verified sellers with quality certification</span>
                     </li>
-                    <li className="flex items-center gap-3 text-silver-100">
+                    <li className="flex items-center gap-3 text-white">
                       <CheckCircle className="w-5 h-5 text-fresh" />
                       <span>Secure payments and order protection</span>
                     </li>
-                    <li className="flex items-center gap-3 text-silver-100">
+                    <li className="flex items-center gap-3 text-white">
                       <CheckCircle className="w-5 h-5 text-fresh" />
                       <span>Delivery in 24-48 hours</span>
                     </li>
