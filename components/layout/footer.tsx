@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Fish, Mail, Phone, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
 
 const footerLinks = {
@@ -35,11 +36,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-                <Fish className="w-6 h-6 text-white" />
-              </div>
-              <span className="font-manrope font-bold text-xl">TonoRib</span>
+            <Link href="/" className="flex items-center mb-4">
+              <Image
+                src="/tonorib-logo.png"
+                alt="TonoRib"
+                width={120}
+                height={40}
+                className="h-10 w-auto object-contain"
+              />
             </Link>
             <p className="text-silver-100 text-sm mb-6 max-w-sm">
               A modern digital fish marketplace for fish farmers, restaurants, distributors, and retail buyers. Buy fresh, sell with confidence.

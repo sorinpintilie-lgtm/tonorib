@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { Search, ShoppingCart, User, Menu, X, Fish, ChevronDown, Package, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -59,11 +60,14 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-[72px]">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-ocean to-teal flex items-center justify-center group-hover:shadow-card transition-shadow">
-              <Fish className="w-6 h-6 text-white" />
-            </div>
-            <span className="font-manrope font-bold text-xl text-ocean">TonoRib</span>
+          <Link href="/" className="flex items-center group">
+            <Image
+              src="/tonorib-logo.png"
+              alt="TonoRib"
+              width={120}
+              height={40}
+              className="h-10 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Navigation */}
