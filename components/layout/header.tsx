@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, ShoppingCart, User, Menu, X, Fish, ChevronDown, Package } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, X, Fish, ChevronDown, Package, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/lib/auth';
 
 const navigation = [
   { name: 'Catalog', href: '/catalog' },
@@ -15,7 +16,7 @@ const navigation = [
 
 const userMenuItems = [
   { name: 'My Account', href: '/account' },
-  { name: 'My Orders', href: '/orders' },
+  { name: 'My Orders', href: '/account/orders' },
   { name: 'Saved Products', href: '/account/saved' },
   { name: 'Delivery Addresses', href: '/account/addresses' },
 ];
@@ -35,10 +36,16 @@ export function Header() {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Mock auth state - in real app this would come from Firebase
-  const isAuthenticated = false;
-  const userRole = null;
+  // Use auth context
+  const { user, logout } = useAuth();
+  const isAuthenticated = !!user;
+  const userRole = user?.role || null;
   const cartItemsCount = 0;
+
+  const handleLogout = async () => {
+    await logout();
+    window.location.href = '/';
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -139,7 +146,11 @@ export function Header() {
                       ))
                     )}
                     <hr className="my-2 border-silver/50" />
-                    <button className="block w-full text-left px-4 py-2 text-sm text-coral hover:bg-seafoam transition-colors">
+                    <button 
+                      onClick={handleLogout}
+                      className="block w-full text-left px-4 py-2 text-sm text-coral hover:bg-seafoam transition-colors flex items-center gap-2"
+                    >
+                      <LogOut className="w-4 h-4" />
                       Logout
                     </button>
                   </div>

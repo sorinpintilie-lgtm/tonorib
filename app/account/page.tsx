@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { 
   User, Package, Heart, MapPin, FileText, Settings, LogOut,
-  ShoppingBag, Clock, ChevronRight, Plus, Edit, Trash2
+  ShoppingBag, Clock, ChevronRight, Plus, Edit, Trash2, Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { mockOrders, mockProducts, mockSellers } from '@/lib/mock-data';
+import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 
 const accountNav = [
@@ -22,7 +23,26 @@ const accountNav = [
 
 export default function AccountPage() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const orders = mockOrders;
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login');
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-ice flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-ocean" />
+      </div>
+    );
+  }
+
+  if (!user) return null;
   
   // Mock saved products
   const savedProducts = mockProducts.slice(0, 4);
