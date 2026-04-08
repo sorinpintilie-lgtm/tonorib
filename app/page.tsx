@@ -35,14 +35,14 @@ export default function Homepage() {
         {/* Background Image */}
         <div className="absolute inset-0">
           <Image
-            src="https://images.unsplash.com/photo-1580476262798-b7d767ce8521?w=1920&q=80"
-            alt="Fresh fish on ice"
+            src="/hero.png"
+            alt="Fresh fish"
             fill
             className="object-cover"
             priority
           />
-          {/* Dark overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-ocean/95 via-ocean/80 to-ocean/60" />
+          {/* Blueish overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-ocean/90 via-ocean/75 to-ocean/55" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
