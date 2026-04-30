@@ -21,14 +21,14 @@ export default function Homepage() {
     { value: '98%', label: 'Fresh Delivery', icon: TrendingUp },
   ];
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/catalog?search=${encodeURIComponent(searchQuery)}`;
-    }
-  };
+   const handleSearch = (e: React.FormEvent) => {
+     e.preventDefault();
+     if (searchQuery.trim()) {
+       window.location.href = `/catalog?search=${encodeURIComponent(searchQuery)}`;
+     }
+   }
 
-  return (
+   return (
     <div className="animate-fade-in">
       {/* Hero Section with Image Background */}
       <section className="relative min-h-[600px] lg:min-h-[700px] overflow-hidden">
@@ -63,7 +63,7 @@ export default function Homepage() {
                    type="text"
                    placeholder="Search trout, sea bream, sea bass..."
                    value={searchQuery}
-                   onChange={(e: React.ChangeEvent<HTMLInputElement>)} => setSearchQuery(e.target.value)
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
                    className="w-full pl-14 pr-36 py-4 bg-white rounded-full text-slate shadow-card focus:outline-none focus:ring-4 focus:ring-white/20"
                  />
                 <Button type="submit" variant="coral" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full px-6">
