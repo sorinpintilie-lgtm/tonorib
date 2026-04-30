@@ -1,123 +1,180 @@
 'use client';
 
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { MapPin, PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/lib/auth';
+import { createClassified, fetchClassifieds } from '@/lib/firebase-data';
+import { ClassifiedListing } from '@/lib/types';
+import { classifiedCategories } from '@/lib/constants';
 
 export default function Classifieds() {
+  const { user } = useAuth();
+  const [items, setItems] = useState<ClassifiedListing[]>([]);
+  const [query, setQuery] = useState('');
+  const [category, setCategory] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [form, setForm] = useState({ title: '', category: '', description: '', priceLabel: '', location: '' });
+
+  const load = async () => {
+    try {
+      setError(null);
+      setItems(await fetchClassifieds());
+    } catch (e: any) {
+      setError(e?.message || 'Unable to load classifieds.');
+      setItems([]);
+    }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const filtered = useMemo(() => items.filter((item) => {
+    const matchesQuery = !query || [item.title, item.description, item.authorName, item.location, item.category]
+      .filter(Boolean)
+      .some((value) => value!.toLowerCase().includes(query.toLowerCase()));
+    const matchesCategory = !category || item.category === category;
+    return matchesQuery && matchesCategory;
+  }), [items, query, category]);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setSubmitting(true);
+    try {
+      await createClassified({
+        title: form.title,
+        category: form.category,
+        description: form.description,
+        priceLabel: form.priceLabel,
+        authorId: user.uid,
+        authorName: user.fullName,
+        contactEmail: user.email,
+        location: form.location,
+        status: 'active',
+      });
+      setForm({ title: '', category: '', description: '', priceLabel: '', location: '' });
+      await load();
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-ice min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <h1 className="text-3xl font-bold font-manrope text-slate mb-4">Classifieds</h1>
-          <p className="text-silver-600 text-lg">
-            Buy and sell fish farming equipment, services, and more in our classifieds section.
+          <p className="text-slate-600 text-lg">
+            Real listings for equipment, services, jobs and operational needs around aquaculture.
           </p>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <input
-                type="text"
-                placeholder="Search classifieds..."
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {}}
-                className="w-full px-4 py-3 border border-silver rounded-lg text-slate placeholder:text-silver-400 focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
-              />
-            </div>
-            <div className="flex gap-3">
-              <Button variant="secondary" className="px-6">
-                Search
-              </Button>
-              <Link href="/classifieds/create">
-                <Button variant="primary" className="px-6">
-                  Post a Classified
-                </Button>
-              </Link>
-            </div>
+          <div className="grid gap-4 md:grid-cols-[1fr_220px]">
+            <input
+              type="text"
+              placeholder="Search classifieds..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full px-4 py-3 border border-silver rounded-lg text-slate placeholder:text-silver-400 focus:outline-none focus:ring-2 focus:ring-teal"
+            />
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full px-4 py-3 border border-silver rounded-lg text-slate focus:outline-none focus:ring-2 focus:ring-teal"
+            >
+              <option value="">All categories</option>
+              {classifiedCategories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+            </select>
           </div>
-          <div className="mt-4">
-            <a href="#" className="text-teal hover:text-teal-600 font-medium">
-              All Categories →
-            </a>
-          </div>
+          {error && <p className="mt-4 text-sm text-coral">{error}</p>}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Classified Card 1 */}
-          <Link href="/classifieds/1" className="group block bg-white rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 p-6">
-            <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.737 1.707h17.414c.921 0 1.366-.807.737-1.707L20.705 5.293a1 1 0 00-1.414-1.414L12 9l-4.293-4.293a1 1 0 00-1.414 1.414L5.4 12H19l4 8z" />
-                </svg>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            {filtered.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filtered.map((item) => (
+                  <Link key={item.id} href={`/classifieds/${item.id}`} className="group block bg-white rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 p-6">
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <span className="bg-teal-50 text-teal border border-teal-200 text-xs px-2 py-1 rounded font-medium">{item.category}</span>
+                      <span className={`text-xs px-2 py-1 rounded font-medium ${item.status === 'active' ? 'bg-fresh-50 text-fresh border border-fresh-200' : 'bg-silver text-slate border border-silver'}`}>{item.status}</span>
+                    </div>
+                    <h3 className="font-semibold font-manrope text-slate mb-2">{item.title}</h3>
+                    <p className="text-slate-600 text-sm mb-4 line-clamp-3">{item.description}</p>
+                    <div className="flex items-center justify-between gap-4 mb-2">
+                      <span className="text-slate font-bold">{item.priceLabel}</span>
+                      <span className="text-sm text-slate-500">{item.authorName}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-slate-500">
+                      <MapPin className="w-3.5 h-3.5" />
+                      <span>{item.location || 'Location not provided'}</span>
+                    </div>
+                  </Link>
+                ))}
               </div>
-              <div className="flex-1">
-                <h3 className="font-semibold font-manrope text-slate mb-2">Used Fish Farming Equipment</h3>
-                <p className="text-silver-600 text-sm mb-3">Complete set of tanks, filters, and pumps for sale. In good condition.</p>
-                <div className="flex items-center justify-between">
-                  <span className="bg-teal-50 text-teal border border-teal-200 text-xs px-2 py-1 rounded font-medium">Equipment</span>
-                  <span className="text-slate font-bold">€1,200</span>
-                </div>
-              </div>
-            </div>
-          </Link>
+            ) : (
+              <div className="bg-white rounded-card p-8 text-slate-500">No classifieds found.</div>
+            )}
+          </div>
 
-          {/* Classified Card 2 */}
-          <Link href="/classifieds/2" className="group block bg-white rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 p-6">
-            <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold font-manrope text-slate mb-2">Fish Feed Supply Contract</h3>
-                <p className="text-silver-600 text-sm mb-3">Long-term supply agreement for high-quality fish feed. Available immediately.</p>
-                <div className="flex items-center justify-between">
-                  <span className="bg-fresh-50 text-fresh border border-fresh-200 text-xs px-2 py-1 rounded font-medium">Services</span>
-                  <span className="text-slate font-bold">Contact for pricing</span>
-                </div>
-              </div>
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
+              <h2 className="text-xl font-semibold font-manrope text-slate mb-6">Post a Classified</h2>
+              {user ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <input
+                    type="text"
+                    required
+                    value={form.title}
+                    onChange={(e) => setForm({ ...form, title: e.target.value })}
+                    className="w-full px-4 py-3 border border-silver rounded-lg text-slate"
+                    placeholder="Listing title"
+                  />
+                  <select
+                    required
+                    value={form.category}
+                    onChange={(e) => setForm({ ...form, category: e.target.value })}
+                    className="w-full px-4 py-3 border border-silver rounded-lg text-slate"
+                  >
+                    <option value="">Select category</option>
+                    {classifiedCategories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+                  </select>
+                  <input
+                    type="text"
+                    required
+                    value={form.priceLabel}
+                    onChange={(e) => setForm({ ...form, priceLabel: e.target.value })}
+                    className="w-full px-4 py-3 border border-silver rounded-lg text-slate"
+                    placeholder="Price or pricing note"
+                  />
+                  <input
+                    type="text"
+                    value={form.location}
+                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                    className="w-full px-4 py-3 border border-silver rounded-lg text-slate"
+                    placeholder="Location"
+                  />
+                  <textarea
+                    required
+                    rows={5}
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                    className="w-full px-4 py-3 border border-silver rounded-lg text-slate resize-none"
+                    placeholder="Describe what you are selling or looking for"
+                  />
+                  <Button type="submit" variant="primary" className="w-full" disabled={submitting}>
+                    <PlusCircle className="w-4 h-4 mr-2" />
+                    {submitting ? 'Posting...' : 'Publish Listing'}
+                  </Button>
+                </form>
+              ) : (
+                <p className="text-sm text-slate-500">Login to publish a real classified listing.</p>
+              )}
             </div>
-          </Link>
-
-          {/* Classified Card 3 */}
-          <Link href="/classifieds/3" className="group block bg-white rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 p-6">
-            <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m2 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold font-manrope text-slate mb-2">Wanted: Fish Farm Consultant</h3>
-                <p className="text-silver-600 text-sm mb-3">Experienced consultant needed for setting up a new tilapia farm.</p>
-                <div className="flex items-center justify-between">
-                  <span className="bg-coral-50 text-coral border border-coral-200 text-xs px-2 py-1 rounded font-medium">Jobs</span>
-                  <span className="text-slate font-bold">Negotiable</span>
-                </div>
-              </div>
-            </div>
-          </Link>
-
-          {/* Classified Card 4 */}
-          <Link href="/classifieds/4" className="group block bg-white rounded-card shadow-card hover:shadow-card-hover transition-all duration-200 p-6">
-            <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V9a2 2 0 00-2 2m2 2h6" />
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-semibold font-manrope text-slate mb-2">Live Fish Transport Trucks</h3>
-                <p className="text-silver-600 text-sm mb-3">Two refrigerated trucks for live fish transport. Well maintained.</p>
-                <div className="flex items-center justify-between">
-                  <span className="bg-[#E8EFF2] text-slate-700 border border-[#C9D6DF] text-xs px-2 py-1 rounded font-medium">Vehicles</span>
-                  <span className="text-slate font-bold">€15,000 each</span>
-                </div>
-              </div>
-            </div>
-          </Link>
+          </div>
         </div>
       </div>
     </div>

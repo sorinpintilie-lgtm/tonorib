@@ -15,14 +15,26 @@ export default function ForumPostPage({ params }: { params: { id: string } }) {
   const [replies, setReplies] = useState<ForumReply[]>([]);
   const [content, setContent] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const load = async () => {
-    const [postData, replyRows] = await Promise.all([fetchForumPostById(params.id), fetchForumReplies(params.id)]);
-    setPost(postData);
-    setReplies(replyRows);
+    try {
+      setLoading(true);
+      setError(null);
+      const [postData, replyRows] = await Promise.all([fetchForumPostById(params.id), fetchForumReplies(params.id)]);
+      setPost(postData);
+      setReplies(replyRows);
+    } catch (e: any) {
+      setError(e?.message || 'Unable to load this discussion.');
+      setPost(null);
+      setReplies([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { load().catch(() => { setPost(null); setReplies([]); }); }, [params.id]);
+  useEffect(() => { load(); }, [params.id]);
 
   const handleReply = async (e: FormEvent) => {
     e.preventDefault();
@@ -37,8 +49,12 @@ export default function ForumPostPage({ params }: { params: { id: string } }) {
     }
   };
 
+  if (loading) {
+    return <div className="min-h-screen bg-ice flex items-center justify-center"><div className="text-slate-500">Loading discussion...</div></div>;
+  }
+
   if (!post) {
-    return <div className="min-h-screen bg-ice flex items-center justify-center"><div className="text-center"><h1 className="text-2xl font-semibold text-slate mb-4">Discussion not found</h1><Button onClick={() => router.push('/forum')}>Back to forum</Button></div></div>;
+    return <div className="min-h-screen bg-ice flex items-center justify-center"><div className="text-center"><h1 className="text-2xl font-semibold text-slate mb-4">Discussion not found</h1>{error && <p className="text-sm text-coral mb-4">{error}</p>}<Button onClick={() => router.push('/forum')}>Back to forum</Button></div></div>;
   }
 
   return (
@@ -53,7 +69,10 @@ export default function ForumPostPage({ params }: { params: { id: string } }) {
         </div>
 
         <div className="bg-white rounded-card shadow-card p-6 mb-6">
-          <h2 className="text-xl font-semibold font-manrope text-slate mb-4">Replies</h2>
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <h2 className="text-xl font-semibold font-manrope text-slate">Replies</h2>
+            <span className="text-sm text-slate-500">{replies.length} total</span>
+          </div>
           <div className="space-y-4">
             {replies.length > 0 ? replies.map((reply) => <div key={reply.id} className="p-4 bg-seafoam rounded-lg"><div className="flex items-center justify-between mb-2"><span className="font-medium text-slate">{reply.authorName}</span><span className="text-xs text-slate-500">{reply.createdAt ? new Date(reply.createdAt).toLocaleString('en-GB') : 'Just now'}</span></div><p className="text-slate-700 whitespace-pre-line">{reply.content}</p></div>) : <p className="text-slate-500">No replies yet.</p>}
           </div>

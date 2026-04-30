@@ -22,6 +22,7 @@ import {
   Auction,
   AuctionBid,
   BlogPost,
+  ClassifiedListing,
   ForumPost,
   ForumReply,
   Order,
@@ -206,13 +207,19 @@ export async function fetchAuctionById(id: string) {
 }
 
 export async function createAuction(input: Omit<Auction, 'id' | 'currentBid' | 'bidCount' | 'createdAt' | 'updatedAt'>) {
-  const created = await addDoc(collection(db, 'auctions'), {
+  const payload: Record<string, any> = {
     ...input,
     currentBid: input.startingBid,
     bidCount: 0,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
-  });
+  };
+
+  if (payload.reservePrice === undefined) {
+    delete payload.reservePrice;
+  }
+
+  const created = await addDoc(collection(db, 'auctions'), payload);
   return created.id;
 }
 
@@ -283,6 +290,23 @@ export async function createForumReply(postId: string, input: Omit<ForumReply, '
     replyCount: await incrementField('forumPosts', postId, 'replyCount'),
     lastActivityAt: serverTimestamp(),
   });
+}
+
+export async function fetchClassifieds() {
+  return fetchCollection<ClassifiedListing>('classifieds', [orderBy('createdAt', 'desc')]);
+}
+
+export async function fetchClassifiedById(id: string) {
+  const snap = await getDoc(doc(db, 'classifieds', id));
+  return snap.exists() ? mapDoc<ClassifiedListing>(snap.id, snap.data()) : null;
+}
+
+export async function createClassified(input: Omit<ClassifiedListing, 'id' | 'createdAt'>) {
+  const created = await addDoc(collection(db, 'classifieds'), {
+    ...input,
+    createdAt: serverTimestamp(),
+  });
+  return created.id;
 }
 
 async function incrementField(collectionName: string, id: string, field: string) {

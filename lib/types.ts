@@ -150,6 +150,20 @@ export interface ForumReply {
   createdAt?: string;
 }
 
+export interface ClassifiedListing {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  priceLabel: string;
+  authorId: string;
+  authorName: string;
+  contactEmail?: string;
+  location?: string;
+  status: 'active' | 'sold' | 'closed';
+  createdAt?: string;
+}
+
 export interface BlogPost {
   id: string;
   title: string;

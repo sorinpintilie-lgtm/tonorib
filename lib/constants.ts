@@ -48,6 +48,15 @@ export const forumCategories = [
   'General Discussion',
 ];
 
+export const classifiedCategories = [
+  'Equipment',
+  'Services',
+  'Jobs',
+  'Vehicles',
+  'Feed & Supplies',
+  'Consulting',
+];
+
 export const productSeedImages: Record<string, string> = {
   trout: '/rainbow-trout-fresh.png',
   seaBream: '/sea-bream.png',

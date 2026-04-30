@@ -13,8 +13,6 @@ import { useCart } from '@/lib/cart';
 const navigation = [
   { name: 'Catalog', href: '/catalog' },
   { name: 'Sellers', href: '/suppliers' },
-  { name: 'Auctions', href: '/auction' },
-  { name: 'Forum', href: '/forum' },
   { name: 'How it Works', href: '/how-it-works' },
 ];
 

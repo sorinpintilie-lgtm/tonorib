@@ -12,7 +12,7 @@ export default function AuctionPage() {
   const { user } = useAuth();
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({ title: '', description: '', productName: '', startingBid: '', endAt: '' });
+  const [form, setForm] = useState({ title: '', description: '', productName: '', startingBid: '', reservePrice: '', endAt: '' });
 
   const load = () => fetchAuctions().then(setAuctions).catch(() => setAuctions([]));
   useEffect(() => { load(); }, []);
@@ -31,13 +31,13 @@ export default function AuctionPage() {
         description: form.description,
         productName: form.productName,
         startingBid: Number(form.startingBid),
-        reservePrice: undefined,
+        reservePrice: form.reservePrice ? Number(form.reservePrice) : undefined,
         endAt: new Date(form.endAt).toISOString(),
         imageUrl: '',
         status: 'live',
         createdBy: user.uid,
       });
-      setForm({ title: '', description: '', productName: '', startingBid: '', endAt: '' });
+      setForm({ title: '', description: '', productName: '', startingBid: '', reservePrice: '', endAt: '' });
       load();
     } finally {
       setSubmitting(false);
@@ -75,6 +75,7 @@ export default function AuctionPage() {
                   <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required className="w-full px-4 py-3 border border-silver rounded-lg text-slate" placeholder="Auction title" />
                   <input value={form.productName} onChange={(e) => setForm({ ...form, productName: e.target.value })} className="w-full px-4 py-3 border border-silver rounded-lg text-slate" placeholder="Product name" />
                   <input value={form.startingBid} onChange={(e) => setForm({ ...form, startingBid: e.target.value })} type="number" required className="w-full px-4 py-3 border border-silver rounded-lg text-slate" placeholder="Starting bid (€)" />
+                  <input value={form.reservePrice} onChange={(e) => setForm({ ...form, reservePrice: e.target.value })} type="number" className="w-full px-4 py-3 border border-silver rounded-lg text-slate" placeholder="Reserve price (€) - optional" />
                   <input value={form.endAt} onChange={(e) => setForm({ ...form, endAt: e.target.value })} type="datetime-local" required className="w-full px-4 py-3 border border-silver rounded-lg text-slate" />
                   <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} required rows={4} className="w-full px-4 py-3 border border-silver rounded-lg text-slate resize-none" placeholder="Describe the lot, quality and delivery terms" />
                   <Button type="submit" variant="primary" className="w-full" disabled={submitting}><PlusCircle className="w-4 h-4 mr-2" />{submitting ? 'Creating...' : 'Create Auction'}</Button>

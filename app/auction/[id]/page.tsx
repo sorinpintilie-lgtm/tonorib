@@ -56,9 +56,10 @@ export default function AuctionDetailPage({ params }: { params: { id: string } }
               <h1 className="text-3xl font-bold font-manrope text-slate mb-3">{auction.title}</h1>
               {auction.productName && <p className="text-slate-500 mb-2">Product: {auction.productName}</p>}
               <p className="text-slate-700 mb-6">{auction.description}</p>
-              <div className="grid sm:grid-cols-3 gap-4">
+              <div className="grid sm:grid-cols-4 gap-4">
                 <div className="p-4 bg-seafoam rounded-lg"><p className="text-sm text-slate-500">Starting bid</p><p className="text-2xl font-bold text-slate">€{auction.startingBid}</p></div>
                 <div className="p-4 bg-seafoam rounded-lg"><p className="text-sm text-slate-500">Current bid</p><p className="text-2xl font-bold text-coral">€{auction.currentBid}</p></div>
+                <div className="p-4 bg-seafoam rounded-lg"><p className="text-sm text-slate-500">Reserve price</p><p className="text-2xl font-bold text-slate">{typeof auction.reservePrice === 'number' ? `€${auction.reservePrice}` : '—'}</p></div>
                 <div className="p-4 bg-seafoam rounded-lg"><p className="text-sm text-slate-500">Ends</p><p className="text-sm font-semibold text-slate">{auction.endAt ? new Date(auction.endAt).toLocaleString('en-GB') : 'TBD'}</p></div>
               </div>
             </div>
