@@ -9,12 +9,17 @@ export default function Auction() {
         Bid in real-time and win great deals!
       </p>
       <div className="mb-8">
-        <div className="flex items-center space-x-3 mb-4">
-          <input type="text" placeholder="Search auctions..." className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400" />
-          <button className="px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-colors">
-            Search
-          </button>
-        </div>
+         <div className="flex items-center space-x-3 mb-4">
+           <input
+             type="text"
+             placeholder="Search auctions..."
+             onChange={(e: React.ChangeEvent<HTMLInputElement>)}
+             className="flex-1 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
+           />
+           <button className="px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-colors">
+             Search
+           </button>
+         </div>
         <div className="flex space-x-4 mb-6">
           <Link href="/auction/create" className="px-6 py-3 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-colors">
             Start an Auction

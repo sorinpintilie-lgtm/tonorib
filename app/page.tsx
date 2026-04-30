@@ -59,13 +59,13 @@ export default function Homepage() {
             <form onSubmit={handleSearch} className="relative max-w-xl mb-8">
               <div className="relative flex items-center">
                 <Search className="absolute left-5 w-5 h-5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search trout, sea bream, sea bass..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-14 pr-36 py-4 bg-white rounded-full text-slate shadow-card focus:outline-none focus:ring-4 focus:ring-white/20"
-                />
+                 <input
+                   type="text"
+                   placeholder="Search trout, sea bream, sea bass..."
+                   value={searchQuery}
+                   onChange={(e: React.ChangeEvent<HTMLInputElement>)} => setSearchQuery(e.target.value)
+                   className="w-full pl-14 pr-36 py-4 bg-white rounded-full text-slate shadow-card focus:outline-none focus:ring-4 focus:ring-white/20"
+                 />
                 <Button type="submit" variant="coral" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full px-6">
                   Search
                 </Button>

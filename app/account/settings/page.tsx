@@ -73,23 +73,23 @@ export default function SettingsPage() {
               Profile Information
             </h2>
             <div className="space-y-4">
-              <Input
-                label="Full Name"
-                value={formData.fullName}
-                onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
-              />
-              <Input
-                label="Email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              />
-              <Input
-                label="Phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-              />
+             <Input
+               label="Full Name"
+               value={formData.fullName}
+               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+             />
+             <Input
+               label="Email"
+               type="email"
+               value={formData.email}
+               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+             />
+             <Input
+               label="Phone"
+               type="tel"
+               value={formData.phone}
+               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+             />
             </div>
           </div>
 
@@ -100,24 +100,24 @@ export default function SettingsPage() {
               Change Password
             </h2>
             <div className="space-y-4">
-              <Input
-                label="Current Password"
-                type="password"
-                value={formData.currentPassword}
-                onChange={(e) => setFormData(prev => ({ ...prev, currentPassword: e.target.value }))}
-              />
-              <Input
-                label="New Password"
-                type="password"
-                value={formData.newPassword}
-                onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
-              />
-              <Input
-                label="Confirm New Password"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-              />
+             <Input
+               label="Current Password"
+               type="password"
+               value={formData.currentPassword}
+               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, currentPassword: e.target.value }))}
+             />
+             <Input
+               label="New Password"
+               type="password"
+               value={formData.newPassword}
+               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
+             />
+             <Input
+               label="Confirm New Password"
+               type="password"
+               value={formData.confirmPassword}
+               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+             />
             </div>
           </div>
 
@@ -128,15 +128,15 @@ export default function SettingsPage() {
               Notifications
             </h2>
             <div className="space-y-4">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={formData.emailNotifications}
-                  onChange={(e) => setFormData(prev => ({ ...prev, emailNotifications: e.target.checked }))}
-                  className="w-4 h-4 text-teal rounded"
-                />
-                <span className="text-sm text-slate-600">Email notifications</span>
-              </label>
+               <label className="flex items-center gap-3 cursor-pointer">
+                 <input
+                   type="checkbox"
+                   checked={formData.emailNotifications}
+                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData(prev => ({ ...prev, emailNotifications: e.target.checked }))}
+                   className="w-4 h-4 text-teal rounded"
+                 />
+                 <span className="text-sm text-slate-600">Email notifications</span>
+               </label>
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"

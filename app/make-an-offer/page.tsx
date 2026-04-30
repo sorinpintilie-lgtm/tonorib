@@ -8,7 +8,7 @@ export default function MakeAnOffer() {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     // Simulate API call
@@ -57,17 +57,17 @@ export default function MakeAnOffer() {
             <label className="block text-silver-100 mb-2 font-medium">Your Offer (€)</label>
             <div className="flex items-center">
               <span className="mr-2 text-silver-100">€</span>
-              <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={offerAmount}
-                onChange={(e) => setOfferAmount(e.target.value)}
-                required
-                className="w-48 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                placeholder="0.00"
-                disabled={submitting}
-              />
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={offerAmount}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>)} => setOfferAmount(e.target.value)
+                  required
+                  className="w-48 px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  placeholder="0.00"
+                  disabled={submitting}
+                />
             </div>
             <p className="mt-1 text-silver-100 text-xs">
               Seller's asking price: €25.00
@@ -78,7 +78,7 @@ export default function MakeAnOffer() {
               <textarea
                 rows={4}
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>)} => setMessage(e.target.value)
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
                 placeholder="Add a note about your offer..."
                 disabled={submitting}
