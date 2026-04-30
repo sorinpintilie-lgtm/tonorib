@@ -1,101 +1,91 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
-
-interface UserData {
-  uid: string;
-  email: string;
-  fullName: string;
-  role: 'buyer' | 'seller';
-  phone?: string;
-}
+import { getFirebaseAuth } from './firebase';
+import { createSellerProfile, createUserProfile, fetchSellerByOwnerId, getUserProfile } from './firebase-data';
+import { UserProfile } from './types';
 
 interface AuthContextType {
-  user: UserData | null;
+  user: UserProfile | null;
+  firebaseUser: any | null;
   loading: boolean;
   error: string | null;
-  signIn: (email: string, password: string) => Promise<UserData>;
-  signUp: (email: string, password: string, fullName: string, role: 'buyer' | 'seller', extraData?: Record<string, string>) => Promise<UserData>;
+  signIn: (email: string, password: string) => Promise<UserProfile>;
+  signUp: (
+    email: string,
+    password: string,
+    fullName: string,
+    role: 'buyer' | 'seller',
+    extraData?: Record<string, string>
+  ) => Promise<UserProfile>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-const STORAGE_KEY = 'tonorib_user';
 
-function buildMockUser(
-  email: string,
-  fullName: string,
-  role: 'buyer' | 'seller',
-  extraData?: Record<string, string>
-): UserData {
-  return {
-    uid: `mock-${email.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
-    email,
-    fullName,
-    role,
-    phone: extraData?.phone || '',
+async function hydrateUser(firebaseUser: any): Promise<UserProfile> {
+  const existing = await getUserProfile(firebaseUser.uid);
+  if (existing) return existing;
+
+  const fallback: UserProfile = {
+    uid: firebaseUser.uid,
+    fullName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+    email: firebaseUser.email || '',
+    role: 'buyer',
   };
-}
-
-function persistUser(user: UserData | null) {
-  if (typeof window === 'undefined') return;
-  if (user) {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-  } else {
-    window.localStorage.removeItem(STORAGE_KEY);
-  }
-}
-
-function readStoredUser(): UserData | null {
-  if (typeof window === 'undefined') return null;
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) return null;
-
-  try {
-    const parsed = JSON.parse(raw) as UserData;
-    if (!parsed?.email || !parsed?.role) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
+  await createUserProfile(fallback);
+  return fallback;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setUser(readStoredUser());
-    setLoading(false);
+    let unsubscribe = () => {};
+
+    (async () => {
+      const auth = await getFirebaseAuth();
+      const { onAuthStateChanged } = await import('firebase/auth/web-extension');
+      unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
+        setFirebaseUser(nextUser);
+        if (!nextUser) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+        try {
+          const profile = await hydrateUser(nextUser);
+          setUser(profile);
+        } catch (e: any) {
+          setError(e?.message || 'Unable to load user profile.');
+        } finally {
+          setLoading(false);
+        }
+      });
+    })();
+
+    return () => unsubscribe();
   }, []);
 
   const clearError = () => setError(null);
 
   const signIn = async (email: string, password: string) => {
-    setLoading(true);
     setError(null);
-
+    setLoading(true);
     try {
-      if (!email || !password) {
-        throw new Error('Email and password are required.');
-      }
-
-      const stored = readStoredUser();
-      const role: 'buyer' | 'seller' = stored?.email?.toLowerCase() === email.toLowerCase()
-        ? stored.role
-        : email.toLowerCase().includes('seller')
-          ? 'seller'
-          : 'buyer';
-
-      const nextUser = stored?.email?.toLowerCase() === email.toLowerCase()
-        ? stored
-        : buildMockUser(email, email.split('@')[0], role);
-
-      setUser(nextUser);
-      persistUser(nextUser);
-      return nextUser;
+      const auth = await getFirebaseAuth();
+      const { signInWithEmailAndPassword } = await import('firebase/auth/web-extension');
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      const profile = await hydrateUser(credential.user);
+      const seller = profile.role === 'seller' && !profile.sellerId ? await fetchSellerByOwnerId(profile.uid) : null;
+      const finalProfile = seller ? { ...profile, sellerId: seller.id } : profile;
+      setFirebaseUser(credential.user);
+      setUser(finalProfile);
+      return finalProfile;
     } catch (e: any) {
       const message = e?.message || 'Unable to sign in.';
       setError(message);
@@ -105,25 +95,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signUp = async (
-    email: string,
-    password: string,
-    fullName: string,
-    role: 'buyer' | 'seller',
-    extraData?: Record<string, string>
-  ) => {
-    setLoading(true);
+  const signUp = async (email: string, password: string, fullName: string, role: 'buyer' | 'seller', extraData?: Record<string, string>) => {
     setError(null);
-
+    setLoading(true);
     try {
-      if (!email || !password || !fullName) {
-        throw new Error('Please fill in all required fields.');
+      const auth = await getFirebaseAuth();
+      const { createUserWithEmailAndPassword } = await import('firebase/auth/web-extension');
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      let sellerId: string | undefined;
+
+      if (role === 'seller') {
+        sellerId = await createSellerProfile({
+          ownerId: credential.user.uid,
+          farmName: extraData?.farmName || fullName,
+          description: extraData?.description || 'New seller on TonoRib.',
+          location: extraData?.location || '',
+          deliveryRegions: [],
+          verified: false,
+          rating: 0,
+          phone: extraData?.phone || '',
+          email,
+          website: '',
+        });
       }
 
-      const nextUser = buildMockUser(email, fullName, role, extraData);
-      setUser(nextUser);
-      persistUser(nextUser);
-      return nextUser;
+      const profile: UserProfile = { uid: credential.user.uid, fullName, email, role, phone: extraData?.phone || '', sellerId };
+      await createUserProfile(profile);
+      setFirebaseUser(credential.user);
+      setUser(profile);
+      return profile;
     } catch (e: any) {
       const message = e?.message || 'Unable to create account.';
       setError(message);
@@ -134,27 +134,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = async () => {
-    setLoading(true);
-    try {
-      setUser(null);
-      persistUser(null);
-    } finally {
-      setLoading(false);
-    }
+    const auth = await getFirebaseAuth();
+    const { signOut } = await import('firebase/auth/web-extension');
+    await signOut(auth);
+    setFirebaseUser(null);
+    setUser(null);
   };
 
-  const value = useMemo(
-    () => ({ user, loading, error, signIn, signUp, logout, clearError }),
-    [user, loading, error]
-  );
+  const value = useMemo(() => ({ user, firebaseUser, loading, error, signIn, signUp, logout, clearError }), [user, firebaseUser, loading, error]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }

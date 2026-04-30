@@ -1,103 +1,65 @@
 'use client';
 
+import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/lib/auth';
+import { createForumPost, fetchForumPosts } from '@/lib/firebase-data';
+import { ForumPost } from '@/lib/types';
+import { forumCategories } from '@/lib/constants';
 
 export default function Forum() {
+  const { user } = useAuth();
+  const [posts, setPosts] = useState<ForumPost[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({ title: '', category: '', content: '' });
+
+  const load = () => fetchForumPosts().then(setPosts).catch(() => setPosts([]));
+  useEffect(() => { load(); }, []);
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setSubmitting(true);
+    try {
+      await createForumPost({ title: form.title, category: form.category, content: form.content, authorId: user.uid, authorName: user.fullName });
+      setForm({ title: '', category: '', content: '' });
+      load();
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-ice min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold font-manrope text-slate mb-4">Forum</h1>
-          <p className="text-silver-600 text-lg">
-            Welcome to the TonoRib Forum! Connect with other fish farmers, sellers, and buyers to discuss
-            best practices, market trends, and industry news.
-          </p>
-        </div>
-
+        <div className="mb-8"><h1 className="text-3xl font-bold font-manrope text-slate mb-4">Forum</h1><p className="text-slate-600 text-lg">Real discussions between farms, sellers and buyers stored in Firestore.</p></div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Popular Discussions */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-xl font-semibold font-manrope text-slate mb-6">Popular Discussions</h2>
+              <h2 className="text-xl font-semibold font-manrope text-slate mb-6">Latest Discussions</h2>
               <div className="space-y-4">
-                <Link href="/forum/topic/1" className="block p-4 bg-seafoam rounded-lg hover:bg-teal-50 transition-colors border border-silver">
-                  <h3 className="font-semibold text-slate mb-2">Sustainable Fish Farming Techniques</h3>
-                  <p className="text-silver-600 text-sm">Discussing eco-friendly practices in aquaculture.</p>
-                  <div className="flex items-center mt-2 text-xs text-silver-600">
-                    <span>23 replies</span>
-                    <span className="mx-2">•</span>
-                    <span>2 hours ago</span>
-                  </div>
-                </Link>
-                <Link href="/forum/topic/2" className="block p-4 bg-seafoam rounded-lg hover:bg-teal-50 transition-colors border border-silver">
-                  <h3 className="font-semibold text-slate mb-2">Market Prices for Sea Bass and Sea Bream</h3>
-                  <p className="text-silver-600 text-sm">Current market trends and pricing strategies.</p>
-                  <div className="flex items-center mt-2 text-xs text-silver-600">
-                    <span>45 replies</span>
-                    <span className="mx-2">•</span>
-                    <span>5 hours ago</span>
-                  </div>
-                </Link>
-                <Link href="/forum/topic/3" className="block p-4 bg-seafoam rounded-lg hover:bg-teal-50 transition-colors border border-silver">
-                  <h3 className="font-semibold text-slate mb-2">New Regulations for Fish Imports</h3>
-                  <p className="text-silver-600 text-sm">Understanding the latest EU regulations affecting our industry.</p>
-                  <div className="flex items-center mt-2 text-xs text-silver-600">
-                    <span>12 replies</span>
-                    <span className="mx-2">•</span>
-                    <span>1 day ago</span>
-                  </div>
-                </Link>
+                {posts.length > 0 ? posts.map((post) => (
+                  <Link key={post.id} href={`/forum/${post.id}`} className="block p-4 bg-seafoam rounded-lg hover:bg-teal-50 transition-colors border border-silver">
+                    <div className="flex items-center justify-between gap-3 mb-2"><h3 className="font-semibold text-slate">{post.title}</h3><span className="text-xs px-2 py-1 bg-white rounded-full border border-silver text-slate-600">{post.category}</span></div>
+                    <p className="text-slate-600 text-sm line-clamp-2">{post.content}</p>
+                    <div className="flex items-center mt-2 text-xs text-slate-600"><span>{post.replyCount} replies</span><span className="mx-2">•</span><span>{post.lastActivityAt ? new Date(post.lastActivityAt).toLocaleString('en-GB') : 'Just now'}</span><span className="mx-2">•</span><span>{post.authorName}</span></div>
+                  </Link>
+                )) : <p className="text-slate-500">No discussion topics yet.</p>}
               </div>
             </div>
           </div>
-
-          {/* Start New Discussion */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
               <h2 className="text-xl font-semibold font-manrope text-slate mb-6">Start a New Discussion</h2>
-              <form onSubmit={(e: React.FormEvent) => {
-                e.preventDefault();
-                // Handle form submission
-              }} className="space-y-4">
-                <div>
-                  <label className="block text-slate font-medium mb-2">Topic Title</label>
-                  <input
-                    type="text"
-                    required
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {}}
-                    className="w-full px-4 py-3 border border-silver rounded-lg text-slate placeholder:text-silver-400 focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
-                    placeholder="Enter your topic title"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate font-medium mb-2">Category</label>
-                  <select
-                    required
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {}}
-                    className="w-full px-4 py-3 border border-silver rounded-lg text-slate focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent"
-                  >
-                    <option value="">Select a category</option>
-                    <option value="farming">Fish Farming</option>
-                    <option value="market">Market & Sales</option>
-                    <option value="regulations">Regulations & Compliance</option>
-                    <option value="technology">Technology & Equipment</option>
-                    <option value="general">General Discussion</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-slate font-medium mb-2">Message</label>
-                  <textarea
-                    required
-                    rows={4}
-                    className="w-full px-4 py-3 border border-silver rounded-lg text-slate placeholder:text-silver-400 focus:outline-none focus:ring-2 focus:ring-teal focus:border-transparent resize-none"
-                    placeholder="Write your message here..."
-                  />
-                </div>
-                <Button type="submit" variant="primary" className="w-full">
-                  Post Discussion
-                </Button>
-              </form>
+              {user ? (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div><label className="block text-slate font-medium mb-2">Topic Title</label><input type="text" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full px-4 py-3 border border-silver rounded-lg text-slate" placeholder="Enter your topic title" /></div>
+                  <div><label className="block text-slate font-medium mb-2">Category</label><select required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full px-4 py-3 border border-silver rounded-lg text-slate"><option value="">Select a category</option>{forumCategories.map((cat) => <option key={cat} value={cat}>{cat}</option>)}</select></div>
+                  <div><label className="block text-slate font-medium mb-2">Message</label><textarea required value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={4} className="w-full px-4 py-3 border border-silver rounded-lg text-slate resize-none" placeholder="Write your message here..." /></div>
+                  <Button type="submit" variant="primary" className="w-full" disabled={submitting}>{submitting ? 'Posting...' : 'Post Discussion'}</Button>
+                </form>
+              ) : <p className="text-sm text-slate-500">Login to create a real discussion topic.</p>}
             </div>
           </div>
         </div>
