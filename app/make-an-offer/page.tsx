@@ -75,14 +75,14 @@ export default function MakeAnOffer() {
           </div>
           <div>
             <label className="block text-silver-100 mb-2 font-medium">Message to Seller (optional)</label>
-            <textarea
-              rows="4"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
-              placeholder="Add a note about your offer..."
-              disabled={submitting}
-            />
+              <textarea
+                rows={4}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                placeholder="Add a note about your offer..."
+                disabled={submitting}
+              />
           </div>
           <button
             type="submit"
