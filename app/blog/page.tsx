@@ -27,7 +27,7 @@ export default function Blog() {
         {/* Blog Post 2 */}
         <Link href="/blog/post/2" className="group block bg-white/5 rounded-lg overflow-hidden hover:bg-white/10 transition-colors">
           <div className="aspect-w-4 aspect-h-3 bg-gray-200">
-            <svg className="h-full w-full text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m2 0a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <svg className="h-full w-full text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m2 0a9 9 0 11-18 0 9 9 0 0118 0 9 9 0 0118 0z"></path></svg>
           </div>
           <div className="p-6">
             <h3 className="text-xl font-semibold font-manrope mb-2">Market Analysis: Sea Bass Prices Q1 2026</h3>

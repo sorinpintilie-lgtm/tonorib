@@ -31,21 +31,21 @@ export default function Forum() {
           e.preventDefault();
           // Handle form submission
         }} className="space-y-4">
-           <div>
-             <label className="block text-silver-100 mb-2 font-medium">Topic Title</label>
-             <input type="text" required onChange={(e: React.ChangeEvent<HTMLInputElement>)} className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400" placeholder="Enter your topic title" />
-           </div>
-           <div>
-             <label className="block text-silver-100 mb-2 font-medium">Category</label>
-             <select required onChange={(e: React.ChangeEvent<HTMLSelectElement>)} className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400">
-               <option value="">Select a category</option>
-               <option value="farming">Fish Farming</option>
-               <option value="market">Market & Sales</option>
-               <option value="regulations">Regulations & Compliance</option>
-               <option value="technology">Technology & Equipment</option>
-               <option value="general">General Discussion</option>
-             </select>
-           </div>
+          <div>
+            <label className="block text-silver-100 mb-2 font-medium">Topic Title</label>
+            <input type="text" required onChange={(e: React.ChangeEvent<HTMLInputElement>)} className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400" placeholder="Enter your topic title" />
+          </div>
+          <div>
+            <label className="block text-silver-100 mb-2 font-medium">Category</label>
+            <select required onChange={(e: React.ChangeEvent<HTMLSelectElement>)} className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400">
+              <option value="">Select a category</option>
+              <option value="farming">Fish Farming</option>
+              <option value="market">Market & Sales</option>
+              <option value="regulations">Regulations & Compliance</option>
+              <option value="technology">Technology & Equipment</option>
+              <option value="general">General Discussion</option>
+            </select>
+          </div>
           <div>
             <label className="block text-silver-100 mb-2 font-medium">Message</label>
             <textarea required rows={5} className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-silver-400 focus:outline-none focus:ring-2 focus:ring-teal-400" placeholder="Write your message here..."></textarea>
