@@ -11,7 +11,7 @@ import { useAuth } from '@/lib/auth';
 
 const navigation = [
   { name: 'Catalog', href: '/catalog' },
-  { name: 'Sellers', href: '/seller' },
+  { name: 'Sellers', href: '/suppliers' },
   { name: 'How it Works', href: '/how-it-works' },
 ];
 

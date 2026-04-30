@@ -8,18 +8,22 @@ const footerLinks = {
     { name: 'Contact', href: '/contact' },
     { name: 'Careers', href: '/careers' },
     { name: 'Blog', href: '/blog' },
+    { name: 'Forum', href: '/forum' },
   ],
   marketplace: [
     { name: 'Catalog', href: '/catalog' },
     { name: 'Sellers', href: '/suppliers' },
     { name: 'How it Works', href: '/how-it-works' },
     { name: 'Pricing', href: '/pricing' },
+    { name: 'Classifieds', href: '/classifieds' },
+    { name: 'Auction', href: '/auction' },
   ],
   support: [
     { name: 'FAQ', href: '/faq' },
     { name: 'Terms of Service', href: '/terms' },
     { name: 'Privacy Policy', href: '/privacy' },
     { name: 'Shipping & Returns', href: '/shipping' },
+    { name: 'Make an Offer', href: '/make-an-offer' },
   ],
 };
 
