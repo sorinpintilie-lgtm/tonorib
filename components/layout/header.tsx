@@ -66,6 +66,7 @@ export function Header() {
               alt="TonoRib"
               width={150}
               height={50}
+              priority
               className="h-12 w-auto object-contain"
             />
           </Link>

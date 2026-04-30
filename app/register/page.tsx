@@ -87,11 +87,16 @@ function RegisterContent() {
         extraData.location = formData.location;
       }
 
-      await signUp(formData.email, formData.password, formData.fullName, formData.role as 'buyer' | 'seller', extraData);
+      const createdUser = await signUp(
+        formData.email,
+        formData.password,
+        formData.fullName,
+        formData.role as 'buyer' | 'seller',
+        extraData
+      );
       setSuccess(true);
       
-      // Redirect based on role
-      if (formData.role === 'seller') {
+      if (createdUser.role === 'seller') {
         router.push('/dashboard');
       } else {
         router.push('/');
@@ -202,6 +207,7 @@ function RegisterContent() {
               <Input
                 label="Full Name"
                 placeholder="Janez Novak"
+                autoComplete="name"
                 value={formData.fullName}
                 onChange={(e) => updateFormData('fullName', e.target.value)}
                 required
@@ -211,6 +217,7 @@ function RegisterContent() {
                 label="Email"
                 type="email"
                 placeholder="janez@example.com"
+                autoComplete="email"
                 value={formData.email}
                 onChange={(e) => updateFormData('email', e.target.value)}
                 required
@@ -220,6 +227,7 @@ function RegisterContent() {
                 label="Phone"
                 type="tel"
                 placeholder="+386 40 123 456"
+                autoComplete="tel"
                 value={formData.phone}
                 onChange={(e) => updateFormData('phone', e.target.value)}
               />
@@ -239,6 +247,7 @@ function RegisterContent() {
                   <Input
                     label="Farm / Company Name"
                     placeholder="Fish Farm d.o.o."
+                    autoComplete="organization"
                     value={formData.farmName}
                     onChange={(e) => updateFormData('farmName', e.target.value)}
                     required
@@ -246,6 +255,7 @@ function RegisterContent() {
                   <Input
                     label="Location"
                     placeholder="Location, City"
+                    autoComplete="address-level2"
                     value={formData.location}
                     onChange={(e) => updateFormData('location', e.target.value)}
                     required
@@ -257,6 +267,7 @@ function RegisterContent() {
                 label="Password"
                 type="password"
                 placeholder="Create a password"
+                autoComplete="new-password"
                 value={formData.password}
                 onChange={(e) => updateFormData('password', e.target.value)}
                 required
@@ -266,6 +277,7 @@ function RegisterContent() {
                 label="Confirm Password"
                 type="password"
                 placeholder="Confirm your password"
+                autoComplete="new-password"
                 value={formData.confirmPassword}
                 onChange={(e) => updateFormData('confirmPassword', e.target.value)}
                 required

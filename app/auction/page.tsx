@@ -104,7 +104,7 @@ export default function Auction() {
                 <p className="text-silver-600 text-sm mb-4">{auction.description}</p>
                 <div className="flex items-center mb-4">
                   <span className="text-teal font-medium">
-                    {auction.currentBid ? "Current Bid:" : "Starting Bid:"}
+                    {auction.currentBid ? 'Current Bid:' : 'Starting Bid:'}
                   </span>
                   <span className="text-2xl font-bold text-slate ml-2">
                     €{auction.currentBid || auction.startingBid}
@@ -124,7 +124,7 @@ export default function Auction() {
               </div>
             </div>
           ))}
-      </div>
+        </div>
 
         {/* Make Offer Modal */}
         {showOfferModal && selectedAuction && (
@@ -147,6 +147,7 @@ export default function Auction() {
             </div>
           </div>
         )}
+      </div>
     </div>
   );
 }

@@ -38,9 +38,8 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      await signIn(formData.email, formData.password);
-      // Redirect based on role after successful login
-      if (user?.role === 'seller') {
+      const signedInUser = await signIn(formData.email, formData.password);
+      if (signedInUser.role === 'seller') {
         router.push('/dashboard');
       } else {
         router.push('/');
@@ -89,6 +88,7 @@ export default function LoginPage() {
               label="Email"
               type="email"
               placeholder="janez@example.com"
+              autoComplete="email"
               value={formData.email}
               onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
               required
@@ -99,6 +99,7 @@ export default function LoginPage() {
                 label="Password"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
+                autoComplete="current-password"
                 value={formData.password}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                 required
